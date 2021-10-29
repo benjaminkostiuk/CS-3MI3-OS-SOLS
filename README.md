@@ -10,7 +10,7 @@ Now I would invite you to seek out a correct answer from your classmates *in thi
 ## Contributing
 I freely upload my solutions to assignments and projects and grant anyone permission to use, copy, modify or distribute these materials as needed. 
 
-If you think you have a better solution or a higher grade than the solution posted (and are willing to contribute) please open a PR with your updated solution.
+If you think you have a better solution or a higher grade than the solution posted (and are willing to contribute) please open a PR with your updated solution. **Please do not submit solutions to assignments that have not been graded yet**.
 
 By opening a PR you also grant permission others permission to use, copy, modify or distribute your work.
 
