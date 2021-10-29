@@ -1,0 +1,299 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+\usepackage{mdwtab}
+\usepackage{mathpartir}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{2MI3 Assignment 3 Solution}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Assignment 3}}\\[6mm]
+
+\end{center}
+
+\medskip
+
+\section{Solution Set}
+
+\subsection{Q1}
+
+We assume the syntax and semantics for UAE as defined in the slides for topic 4.
+We define a new addition operator with the following syntax in EBNF:
+\begin{verbatim}
+    t ::= ...
+          | add t t
+    
+    v ::= ...
+    
+    nv ::= ...
+\end{verbatim}
+Where \verb|t| define terms, \verb|v| values and \verb|nv| numerical values as given in the slides. We add our addition operator to
+the definition of \verb|t|.
+
+We define the small-step semantics for the new addition operator by the following inference rules:
+\begin{center}
+    \begin{mathpar}
+        % \inferrule{
+        %     nv_1 \in \texttt{nv}
+        % }
+        {
+            \texttt{add} \:\:  \texttt{0} \:\: \texttt{nv} \: \rightarrow \: \texttt{nv}
+        }
+    \end{mathpar}
+    \begin{mathpar}
+        % \inferrule{
+        %     nv_1 \in \texttt{nv}
+        %     \and nv_2 \in \texttt{nv}
+        % }
+        {
+            \texttt{add (succ nv\textsubscript{1})} \:\: \texttt{nv\textsubscript{2}} 
+            \rightarrow
+            \: \texttt{succ (add nv\textsubscript{1} nv\textsubscript{2})}
+        }
+    \end{mathpar}
+    \medskip
+    \begin{mathpar}
+        \inferrule{
+            t \rightarrow t'
+        }
+        {
+            \texttt{add} \:\: t \:\: \texttt{nv} 
+            \rightarrow
+            \: \texttt{add} \:\: t' \:\: \texttt{nv}
+        }
+    \end{mathpar}
+    \medskip
+    \begin{mathpar}
+        \inferrule{
+            t \rightarrow t'
+        }
+        {
+            \texttt{add} \:\: \texttt{nv}  \:\: t
+            \rightarrow
+            \: \texttt{add} \:\: \texttt{nv} \:\: t' 
+        }
+    \end{mathpar}
+    \medskip
+    \begin{mathpar}
+        \inferrule{
+            t_1 \rightarrow t_1'
+            \and t_2 \rightarrow t_2'
+        }
+        {
+            \texttt{add} \:\: t_1  \:\: t_2
+            \rightarrow
+            \: \texttt{add} \:\: t_1' \:\: t_2' 
+        }
+    \end{mathpar}
+
+  \end{center}
+
+\subsection{Q2}
+
+We will prove that our language UAE as defined in the topic 4 slides is determinate. Thus, the
+extension of our language with the added semantics for arithmetic expression should satisfy the property
+\begin{center}
+    $t \rightarrow t' \land t \rightarrow t'' \implies t' = t''$
+\end{center}
+for all terms $t,t',t''$.
+We will prove this property holds by induction on the derivation $t \rightarrow t'$.
+
+\medskip
+\emph{Base case.} The base case denotes the final derivation where $t \rightarrow t'$ will yield a value instead
+of an expression evaluatable by a sub-derivation. The possible derivations that could yield a value are of the following:
+
+\medskip
+\textbf{Case:} E-IfTrue, E-IfFalse\\
+We can extend the argument presented in the slides for topic 4 to also hold for the new rules introduced with arithmetic
+expressions. It's obvious that none of the arithmetic derivations apply to terms of the form \verb|if t1 then t2 else t3|, thus
+we need only to contend with the boolean subset of rules, which was already shown holds from topic 4.
+
+\medskip
+\textbf{Case:} E-PredZero, E-PredSucc, E-IsZeroZero, E-IsZeroSucc\\
+We can show that the derivations $t \rightarrow t'$ and $t \rightarrow t''$ must use the same rule, E-PredZero by comparing
+the term \verb|pred| is applied to. \verb|pred| is applied to \verb|0|, a value, thus it cannot be further evaluated and must the
+final step, eliminating any rules that require sub-derivations. Furthermore, \verb|0| cannot be evaluated to \verb|succ nv| for any
+numerical value \verb|nv|, and vice versa, since they are both values. Thus we can conlcude that E-PredZero is the only derivation that can
+applied to $t$.
+
+We can apply a similar argument for E-PredSucc, E-IsZeroZero and E-IsZeroSucc.
+
+\medskip
+\emph{Induction Step.} We assume that for all sub-derviations of $t \rightarrow t'$ the above property holds, i.e.
+all sub-derivations are deterministic. We will prove that for all possible derivations $t \rightarrow t'$ the property holds.
+The derivation $t \rightarrow t'$ must be one of the following:
+
+\medskip
+\textbf{Case:} E-IfTrue, E-IfFalse, E-If\\
+We've already proved in class that for all derivations E-IfTrue, E-IfFalse and E-If over 
+boolean elements our property of determinancy holds as shown in slides from topic 4. It is obvious
+that derivations added by extending our language over arithmetic expressions do not apply to terms of the form \verb|if t1 then t2 else t3|. 
+Thus we can extend our proof as shown in topic 4 slides such that our property will still hold for E-IfTrue, E-IfFalse and E-If.
+
+\medskip
+\textbf{Case:} E-Succ\\
+If E-Succ was the last derivation, we know that $t$ must be of the form \verb|succ s| where \verb|s| is a term in our language.
+And that via E-Succ $t' =$ \verb|succ s'|.
+We then have the premise that there exists some sub-derivation $s \rightarrow s'$. 
+
+It is trivially obvious that all other rules cannot be applied to $t$, since they do not apply to terms of the form \verb|succ s|.
+Thus we know that via E-Succ $t'' =$ \verb|succ s''| and we have the premise of the sub-derivation $s \rightarrow s''$.
+
+In order to show that $t' = t''$ we need to show that $s' = s''$. By our induction hypothesis we know that our property holds for
+all sub-derivations of $t \rightarrow t'$. Thus we know that
+\begin{center}
+    $s \rightarrow s' \land s \rightarrow s'' \implies s' = s''$
+\end{center}
+Since we have our premises $s \rightarrow s'$ and $s \rightarrow s''$ we can conclude  $s' = s''$. Thus, $t' = t''$. Therefore our
+property holds for the E-Succ case.
+
+\medskip
+\textbf{Case:} E-PredZero\\
+If E-PredZero was the last derivation, we know that $t$ must be of the form \verb|pred 0|.
+
+In order for $t'$ to not equal $t''$, we would need to apply a different rule to $t$ than E-PredZero, thus
+we show that only E-PredZero can be applied to $t$.
+
+\medskip
+It is trivially obvious that all other rules except E-Pred and E-PredSucc cannot be applied to $t$, since they do not apply to
+terms of the form \verb|pred t|. 
+E-PredSucc cannot be applied to $t$ since \verb|succ nv| cannot be evaluated to \verb|0| since both are values ($V$).
+Similarly, E-Pred can only be applied if \verb|t1| in its definition can be evaluated. 
+Since in our case \verb|t1 = 0| $\in V$ futher evaluation of \verb|0| is impossible, thus we cannot apply E-Pred.
+
+\medskip
+Therefore we can only apply the derivation E-PredZero to $t$ and our property holds if the last derivation was E-PredZero.
+
+\medskip
+\textbf{Case:} E-PredSucc\\
+We can prove this case similarly to E-PredZero. If E-PredSucc was the last derivation, we know that $t$ must
+be of the form \verb|pred (succ nv)| where \verb|nv| is a numeric value.
+
+\medskip
+It is trivially obvious that all other rules except E-Pred cannot be applied to $t$, since they cannot apply to
+terms of the form \verb|pred (succ nv)|. E-Pred can only be applied if \verb|t1| in its definition can be evaluated. 
+Since in our case \verb|t1 = succ nv| $\in V$ futher evaluation of \verb|succ nv| is impossible, thus we cannot apply E-Pred.
+
+\medskip
+Therefore we can only apply the derivation E-PredSucc to $t$ and our property holds if the last derivation was E-PredSucc.
+
+\medskip
+\textbf{Case:} E-Pred\\
+We can prove this case similarly to E-Succ.
+If E-Pred was the last derivation, we know that $t$ must be of the form \verb|pred s| where \verb|s| is a term in our
+language. Via E-Pred we know that $t' = $ \verb|pred s'| and we have the premise that there exists some sub-derivation $s \rightarrow s'$.
+
+We can apply a similar argument used in the E-PredZero case to show that the only possible derivation that can applied to $t$ is
+E-Pred. Thus we know that via E-Pred $t'' =$ \verb|pred s''| with the premise of $s \rightarrow s''$. 
+
+In order to show that $t' = t''$ we also need to show $s' = s''$. By our induction hypothesis we know that our
+property $s \rightarrow s' \land s \rightarrow s'' \implies s' = s''$ holds for all sub-derivations of $t \rightarrow t'$.
+Since we have the premises $s \rightarrow s'$ and $s \rightarrow s''$ we can conclude $s' = s''$. 
+Thus, $t' = $ \verb|pred| $s' =$ \verb|pred| $s'' = t''$.
+
+Therefore our inductive step holds for case E-Pred.
+
+\medskip
+\textbf{Case:} E-IsZeroZero\\
+We can prove this case similarly to E-PredZero. If E-IsZeroZero was the last derivation, 
+we know that $t$ must be of the form \verb|iszero 0|.
+
+\medskip
+We'll show that only E-IsZeroZero can be applied to $t$. It is trivially obvious that all other rules except
+E-IsZeroZero and E-IsZeroSucc cannot be applied to $t$, since they do not apply to terms of the form \verb|iszero t|.
+E-IsZeroSucc cannot be applied to $t$ since \verb|succ nv| cannot be evaluated to \verb|0| since both are values.
+E-IsZeroZero can only be applied if \verb|t1| in its definition can be evaluated. 
+Since in our case \verb|t1 = 0| $\in V$ futher evaluation of \verb|0| is impossible, thus we cannot apply E-IsZeroZero.
+
+\medskip
+Therefore we can only apply the derivation E-IsZeroZero to $t$ and our property holds if the last derivation was E-IsZeroZero.
+
+\medskip
+\textbf{Case:} E-IsZeroSucc\\
+We can prove this case similarly to E-PredZero. If E-IsZeroSucc was the last derivation, we know that $t$ must
+be of the form \verb|iszero (succ nv)| where \verb|nv| is a numeric value.
+
+\medskip
+It is trivially obvious that all other rules except E-IsZero cannot be applied to $t$, since they cannot apply to
+terms of the form \verb|iszero (succ nv)|. E-IsZero can only be applied if \verb|t1| in its definition can be evaluated. 
+Since in our case \verb|t1 = succ nv| $\in V$ futher evaluation of \verb|succ nv| is impossible.
+
+\medskip
+Therefore we can only apply the derivation E-IsZeroSucc to $t$ and our property holds if the last derivation was E-IsZeroSucc.
+
+\medskip
+\textbf{Case:} E-IsZero\\
+We can prove this case similarly to E-Pred.
+If E-IsZero was the last derivation, we know that $t$ must be of the form \verb|iszero s| where \verb|s| is a term in our
+language. Via E-IsZero we know that $t' = $ \verb|iszero s'| and we have the premise that there exists some sub-derivation $s \rightarrow s'$.
+
+We can apply a similar argument used in the E-IsZeroZero case to show that the only possible derivation that can applied to $t$ is
+E-IsZero. Thus we know that via E-IsZero $t'' =$ \verb|iszero s''| with the premise of $s \rightarrow s''$. 
+
+In order to show that $t' = t''$ we also need to show $s' = s''$. By our induction hypothesis we know that our
+property $s \rightarrow s' \land s \rightarrow s'' \implies s' = s''$ holds for all sub-derivations of $t \rightarrow t'$.
+Since we have the premises $s \rightarrow s'$ and $s \rightarrow s''$ we can conclude $s' = s''$. 
+Thus, $t' = $ \verb|iszero| $s' =$ \verb|iszero| $s'' = t''$.
+
+Therefore our inductive step holds for case E-IsZero.
+
+\medskip
+
+We have shown that for all possible derivations of $t \rightarrow t'$ the property holds. 
+Therefore our induction step holds.
+
+\medskip
+
+Thus, we've shown that our UAE language, extended with arithmetic expressions, is still determinate.
+
+\end {document}

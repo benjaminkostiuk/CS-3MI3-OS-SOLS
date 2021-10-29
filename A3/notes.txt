@@ -1,0 +1,7 @@
+Grade: 92.5%
+TA Comments:
+    points reason losing marks
+    2 didnt aknowledging that we don’t need to reprove determinacy for the booleans
+    1 if t = succ nv -> Normal form
+
+Poster Comments: I'll fix this evenually once I figure out what the TA comments mean
