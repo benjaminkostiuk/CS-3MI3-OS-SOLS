@@ -104,12 +104,12 @@ We define the small-step semantics for the new addition operator by the followin
     \medskip
     \begin{mathpar}
         \inferrule{
-            t \rightarrow t'
+            t_1 \rightarrow t_1'
         }
         {
-            \texttt{add} \:\: t \:\: \texttt{nv} 
+            \texttt{add} \:\: t_1 \:\: t_2 
             \rightarrow
-            \: \texttt{add} \:\: t' \:\: \texttt{nv}
+            \: \texttt{add} \:\: t_1' \:\: t_2
         }
     \end{mathpar}
     \medskip
@@ -121,18 +121,6 @@ We define the small-step semantics for the new addition operator by the followin
             \texttt{add} \:\: \texttt{nv}  \:\: t
             \rightarrow
             \: \texttt{add} \:\: \texttt{nv} \:\: t' 
-        }
-    \end{mathpar}
-    \medskip
-    \begin{mathpar}
-        \inferrule{
-            t_1 \rightarrow t_1'
-            \and t_2 \rightarrow t_2'
-        }
-        {
-            \texttt{add} \:\: t_1  \:\: t_2
-            \rightarrow
-            \: \texttt{add} \:\: t_1' \:\: t_2' 
         }
     \end{mathpar}
 

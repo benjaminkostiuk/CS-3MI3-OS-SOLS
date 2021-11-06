@@ -5,3 +5,4 @@ TA Comments:
     1 if t = succ nv -> Normal form
 
 Poster Comments: I'll fix this evenually once I figure out what the TA comments mean
+* I've updated my answer Q1 to simplify the evaluation rules I used even further
