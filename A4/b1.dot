@@ -1,0 +1,18 @@
+digraph b1 {
+node [shape=plaintext]
+edge [dir=none]
+
+lq [ label=<&#955;q>]
+ls [ label=<&#955;s> ]
+app1 [ label=<<I>apply</I>> ]
+app2 [ label=<<I>apply</I>> ]
+app3 [ label=<<I>apply</I>> ]
+s [ label=<s> ]
+lt [ label=<&#955;t> ]
+
+
+app1 -> {lq, ls};
+lq -> app2 -> {q, r};
+ls -> app3 -> {s, lt};
+lt -> t;
+}

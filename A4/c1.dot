@@ -1,0 +1,28 @@
+digraph c1 {
+node [shape=plaintext]
+edge [dir=none]
+
+
+lz [ label=<&#955;z> ]
+la [ label=<&#955;a> ]
+lb [ label=<&#955;b> ]
+lc [ label=<&#955;c> ]
+app1 [ label=<<I>apply</I>> ]
+app2 [ label=<<I>apply</I>> ]
+lz2 [ label=<&#955;z> ]
+app3 [ label=<<I>apply</I>> ]
+a [label=<a>]
+lx [ label=<&#955;x> ]
+app4 [ label=<<I>apply</I>> ]
+app5 [ label=<<I>apply</I>> ]
+z1 [ label=<z> ]
+c1 [ label=<c>]
+
+
+lz -> la -> lb -> lc -> app1;
+app1 -> {app2, lz2};
+app2 -> {app3, z};
+app3 -> {a, lx};
+lx -> app4 -> {x, c}
+lz2 -> app5 -> {z1, c1}
+}
