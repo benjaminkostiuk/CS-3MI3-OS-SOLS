@@ -1,5 +1,5 @@
-Grade: 100%
-TA comments: None
+Grade: 97%%
+TA comments: 4.missing explaination of how you got it.
 
 Submission Notes: Used dot and \includegraphics for the images.
 The src .dot files are included.
