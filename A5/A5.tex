@@ -1,0 +1,318 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+\usepackage{mdwtab}
+\usepackage{mathpartir}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\makeatletter
+\newcount\my@repeat@count
+\newcommand{\mrep}[2]{%
+  \begingroup
+  \my@repeat@count=\z@
+  \@whilenum\my@repeat@count<#1\do{#2\advance\my@repeat@count\@ne}%
+  \endgroup
+}
+\makeatother
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{2MI3 Assignment 5 Solution}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Assignment 5}}\\[6mm]
+
+\end{center}
+
+\medskip
+
+\section{Solution Set}
+
+\subsection{Q1}
+
+We can encode the \emph{Fib} function as given in the assignment with a $\lambda$ expression
+in our $\lambda$-Calculus as follows:
+\begin{center}
+    $\texttt{g = }\lambda \texttt{fib}.\lambda n.
+    \texttt{\:if}\:\:\texttt{iszero\:(pred}\:n)\:\texttt{then}\:\:n\:\:\texttt{else}
+    \:\:\texttt{fib}\:(\texttt{pred}\:n)\:
+            +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:n))$
+    $\texttt{fix = }\lambda f.(\lambda x.f\:(\lambda y.\:x\:x\:y))\:(\lambda x.f\:(\lambda y.x\:x\:y))$
+\end{center}
+\begin{center}
+    $\texttt{fib} = \texttt{fix g}$
+\end{center}
+We can now use our function to compute the 4$^{th}$ number in the Fibonacci sequence which corresponds to $n = 3$.
+\begin{center}
+    \underline{\texttt{fib 3}:}
+\end{center}
+\begin{center}
+    %
+    \begin{tabular}{c l}
+    & $\texttt{fix g 3}$ \\ 
+    $\rightarrow$ & $(\lambda f.(\lambda x. f(\lambda y.x\:x\:y)) (\lambda x.f(\lambda y.x\:x\:y)))\;\texttt{g 3}$ \\
+    $\rightarrow$ & $(\lambda x. \texttt{g}\:(\lambda y.x\:x\:y)) (\lambda x.\texttt{g}\:(\lambda y.x\:x\:y))\:3$ \\
+    $\texttt{setting}$ & $h = \lambda x. \texttt{g} (\lambda y. x\:x\:y)$\\
+    $\texttt{yields}$ & $(\lambda x. \texttt{g}\:(\lambda y.x\:x\:y))\:h\:3$\\
+    $\rightarrow$ & $\texttt{g}\:(\lambda y.h\:h\:y)\:3$\\
+    $\texttt{setting}$ & $\texttt{fib} = \lambda y.h\:h\:y$\\
+    $\texttt{yields}$ & $\texttt{g}\:\texttt{fib}\:3$\\
+    $\rightarrow$ & $(\lambda \texttt{fib}.\lambda n.
+    \texttt{\:if}\:\:\texttt{iszero\:(pred}\:n)\:\texttt{then}\:\:n\:\:\texttt{else}
+    \:\:\texttt{fib}\:(\texttt{pred}\:n)\:
+            +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:n)))\:\texttt{fib}\:3$\\
+    
+    $\rightarrow \rightarrow$ & $
+    \texttt{\:if}\:\:\texttt{iszero\:(pred}\:3)\:\texttt{then}\:\:3\:\:\texttt{else}
+    \:\:\texttt{fib}\:(\texttt{pred}\:3)\:
+            +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:3))$\\
+
+    $\mrep{2}{\rightarrow}$ & $
+    \texttt{\:if}\:\:\texttt{false}\:\texttt{then}\:\:3\:\:\texttt{else}
+    \:\:\texttt{fib}\:(\texttt{pred}\:3)\:
+            +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:3))$\\
+    
+    $\mrep{4}{\rightarrow}$  & $\texttt{fib}\:2 + \texttt{fib}\:1$\\
+    $\mrep{1}{\rightarrow}$  & $(\lambda y.h\:h\:y)\:2 + \texttt{fib}\:1$\\
+    \end{tabular}
+    \begin{tabular}{c l}
+    $\mrep{1}{\rightarrow}$  & $(h\:h\:2) + \texttt{fib}\:1$\\
+
+    $\mrep{1}{\rightarrow}$  & $((\lambda x.\texttt{g}\:(\lambda y.x\:x\:y))\:h\:2) + \texttt{fib}\:1$\\
+    $\mrep{1}{\rightarrow}$  & $(\texttt{g}\:(\lambda y.h\:h\:y)\:2) + \texttt{fib}\:1$\\
+    $\mrep{1}{\rightarrow}$  & $(\texttt{g}\:\texttt{fib}\:2) + \texttt{fib}\:1$\\
+    $\mrep{3}{\rightarrow}$  & $(
+        \texttt{if}\:\:\texttt{iszero\:(pred}\:2)\:\texttt{then}\:\:2\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:2)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:2))
+    ) + \texttt{fib}\:1$\\
+
+    $\mrep{4}{\rightarrow}$  & $(
+        \texttt{fib}\:(\texttt{pred}\:2)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:2))
+    ) + \texttt{fib}\:1$\\
+
+    $\mrep{3}{\rightarrow}$  & $
+        \texttt{fib}\:1 + \texttt{fib}\:0
+     + \texttt{fib}\:1$\\
+
+     $\mrep{1}{\rightarrow}$  & $(\lambda y.h\:h\:y)\:1  + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+     $\mrep{1}{\rightarrow}$  & $(h\:h\:1) + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+     $\mrep{1}{\rightarrow}$  & $((\lambda x.\texttt{g}\:(\lambda y.x\:x\:y))\:h\:1)  + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+     $\mrep{1}{\rightarrow}$  & $(\texttt{g}\:\texttt{fib}\:1) + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+
+     $\mrep{3}{\rightarrow}$  & $(
+        \texttt{if}\:\:\texttt{iszero\:(pred}\:1)\:\texttt{then}\:\:1\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:1)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:1))
+    ) + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+
+    $\mrep{2}{\rightarrow}$  & $(
+        \texttt{if}\:\:\texttt{true}\:\texttt{then}\:\:1\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:1)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:1))
+    ) + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+
+    $\mrep{1}{\rightarrow}$  & $1 + \texttt{fib}\:0 + \texttt{fib}\:1$\\
+    $\mrep{1}{\rightarrow}$  & $1 + (\lambda y.h\:h\:y)\:0 + \texttt{fib}\:1$\\
+    $\mrep{2}{\rightarrow}$  & $1 + ((\lambda x.\texttt{g}\:(\lambda y.x\:x\:y))\:h\:0) + \texttt{fib}\:1$\\
+    $\mrep{1}{\rightarrow}$  & $1 + (\texttt{g}\:\texttt{fib}\:0) + \texttt{fib}\:1$\\
+
+    $\mrep{3}{\rightarrow}$  & $1 + (
+        \texttt{if}\:\:\texttt{iszero\:(pred}\:0)\:\texttt{then}\:\:0\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:0)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:0))
+    ) + \texttt{fib}\:1$\\
+
+    $\mrep{3}{\rightarrow}$  & $1 + 0 + \texttt{fib}\:1$\\
+    $\mrep{1}{\rightarrow}$  & $1 + \texttt{fib}\:1$\\
+    $\mrep{5}{\rightarrow}$  & $1 + (\texttt{g}\:\texttt{fib}\:1)$\\
+
+    $\mrep{3}{\rightarrow}$  & $1 + (
+        \texttt{if}\:\:\texttt{iszero\:(pred}\:1)\:\texttt{then}\:\:1\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:1)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:1))
+    )$\\
+
+    $\mrep{1}{\rightarrow}$  & $1 + (
+        \texttt{if}\:\:\texttt{iszero}\:0\:\texttt{then}\:\:1\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:1)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:1))
+    )$\\
+
+    $\mrep{1}{\rightarrow}$  & $1 + (
+        \texttt{if}\:\:\texttt{true}\:\texttt{then}\:\:1\:\:\texttt{else}
+        \:\:\texttt{fib}\:(\texttt{pred}\:1)\:
+                +\:\texttt{fib}\:(\texttt{pred}\:(\texttt{pred}\:1))
+    )$\\
+
+    $\mrep{1}{\rightarrow}$  & $1 + 1$\\
+    $\mrep{1}{\rightarrow}$  & $2$\\
+    $\nrightarrow$ & \\
+    \end{tabular}
+\end{center}
+
+By our derivation we see that \texttt{fib} 3 is equal to 2. Thus the fourth element in our Fibonacci sequence
+is 2.
+
+\subsection{Q2}
+
+We will prove the call-by-value evaluation strategy of $\lambda$-Calculus is determinate. Thus, any
+term $t$ in $\lambda$-Calculus should satisfy the property
+\begin{center}
+    $t \rightarrow t' \land t \rightarrow t'' \implies t' = t''$
+\end{center}
+We will we prove this property holds by induction on the derivation $t \rightarrow t'$.
+
+\medskip
+We must first define what we consider a normal form in our call-by-value strategy for $\lambda$-Calculus.
+We say that any term $t$ is in normal form if $t$ is a single abstraction of the form $\lambda x.\:t_1$ or
+any number of free variables. Thus we know that values as defined in the operational semantics
+of the call-by-value strategy are terms in normal form.
+
+\medskip
+\emph{Base case.} The base case denotes the final derivation where $t \rightarrow t'$ will yield a
+term in normal form that cannot be further evaluated. It is trivial to see that the only possible
+derivation that can yield a term in normal form is E-AppAbs, thus our final derivation is also
+determinate.
+
+Therefore our base case holds.
+
+\medskip
+\emph{Induction step.} We assume that all sub-derivations of $t \rightarrow t'$, the above property
+holds, i.e. all sub-derivations are deterministic. We will prove that for all possible derivations
+$t \rightarrow t'$ the property holds. The derivation $t \rightarrow t'$ must be one of the following:
+
+\medskip
+\textbf{Case:} E-App1
+
+If E-App1 was the last derivation, we know that $t$ must be of the form $t_1\:t_2$ with $t_1$,$t_2$
+terms in $\lambda$-Calculus. We know that via E-App1 that $t' = t_1'\:t_2$ and have the permise there
+exists some sub-derivation $t_1 \rightarrow t_1'$.
+
+We know we cannot apply E-App2 to $t$ since E-App2 would require $t_1$ be a value, however values are
+in normal form and cannot be further evaluated which contradicts the premise of $t_1 \rightarrow t_1'$.
+Similarly, we cannot apply E-AppAbs to $t$ since it would require $t_1$ to be of the form $\lambda x.\:t_i$
+which is normal, and contradicts the premise $t_1 \rightarrow t_1'$. Therefore the only rule we can apply is E-App1.
+
+In order to show $t' = t''$ we need to show also that $t_1' = t_1''$. By E-App1 we know that $t'' = t_1''\:\:t_2$ and
+has the premise $t_1 \rightarrow t_1''$. By our induction hypothesis we know that our property holds
+for all sub-derivations of $t \rightarrow t'$. Thus we know $t_1 \rightarrow t_1' \land t_1 \rightarrow t_1'' \implies t_1' = t_1''$.
+Since we have premises $t_1 \rightarrow t_1'$ and $t_1 \rightarrow t_1''$ we can conclude $t_1' = t_1''$.
+
+Therefore our property holds for the E-App1 case.
+
+\medskip
+\textbf{Case:} E-App2
+
+We can prove the E-App2 case similar to E-App1. If E-App2 was the last derivation, we know that $t$
+must be of the form $t_1\:t_2$ with $t_1$,$t_2$ terms in $\lambda$-Calculus. We know that via E-App2 
+that $t' = t_1\:t_2'$ and we have the permise there exists some sub-derivation $t_2 \rightarrow t_2'$.
+
+We know we cannot apply E-App1 to $t$ since E-App1 would require $v_1$ be a term that can be further
+evaluated, however values are in normal form and cannot be further evaluated.
+Similarly, we cannot apply E-AppAbs to $t$ since it would require $t_2$ to be a value, however values are
+in normal form and cannot be further evaluated, which contradicts the premise $t_2 \rightarrow t_2'$.
+Therefore the only rule we can apply is E-App2.
+
+In order to show $t' = t''$ we need to show also that $t_2' = t_2''$. By E-App2 we know that $t'' = t_1\:\:t_2''$ and
+has the premise $t_2 \rightarrow t_2''$. By our induction hypothesis we know that our property holds
+for all sub-derivations of $t \rightarrow t'$. Thus we know $t_2 \rightarrow t_2' \land t_2 \rightarrow t_2'' \implies t_2' = t_2''$.
+Since we have premises $t_2 \rightarrow t_2'$ and $t_2 \rightarrow t_2''$ we can conclude $t_2' = t_2''$.
+
+Therefore our property holds for the E-App2 case.
+
+\medskip
+\textbf{Case:} E-AppAbs
+
+Lastly we prove the E-AppAbs case. If E-AppAbs was the last derivation, we know $t$ must be of the
+form $\lambda x.\:t_1$. We know we cannot apply E-App1 to $t$ since $\lambda x.\:t_1$ is in normal form
+which cannot be evaluated further, contradicting E-App1's requirement that there must exist a sub-derivation
+$t_1 \rightarrow t_1'$. Similarly, we know we cannot E-App2 to $t$ since $v_2$ is a value, which is normal form
+and cannot be further evaluated, contradicting E-App2's requirements that must exist a sub-derviation $t_2 \rightarrow
+t_2'$.
+Therefore our property holds for the E-AppAbs case.
+
+\medskip
+We have shown that for all possible derivations $t \rightarrow t'$ our property holds. Therefore our
+induction step holds.
+
+\medskip
+Thus, we've shown the call-by-value evaluation strategy of $\lambda$-Calculus is determinate.
+
+\subsection{Q3}
+
+We will prove that the Termination property does not hold for $\lambda$-Calculus. If we were to prove the termination
+property holds for our $\lambda$-Calculus we would need to show that any term in $\lambda$-Calculus can
+eventually be evaluated to a normal form, i.e. for any term in our $\lambda$-Calculus
+there exists a series of evaluation steps of finite length to evaluate the term to a normal form. Formally we prove
+\begin{center}
+    $\forall\:t \in \mathcal{T}\:\exists\:t' \in \mathcal{N}~|~t \rightarrow^* t'$
+\end{center}
+with  $\mathcal{N}$ the set of terms in normal form and $\mathcal{T}$ the set of terms in our $\lambda$-Calculus.
+
+Thus to prove the termination property does not hold for $\lambda$-Calculus it suffices to provide a counterexample, a term $q$
+in our $\lambda$-Calculus, for which we can construct an infinite series of evaluation steps $q \rightarrow q_1 \rightarrow q_2 \rightarrow ...$
+for which all $q_i$ are not in normal form.
+
+We define our counterexample $q$ as
+\begin{center}
+    $q = (\lambda x.\:x\:x)\:(\lambda x.\:x\:x)$
+\end{center}
+When you $\beta$-reduce $q$ by resolving the application you obtain the same term
+\begin{center}
+    $(\lambda x.\:x\:x)\:(\lambda x.\:x\:x) \rightarrow (\lambda x.\:x\:x)\:(\lambda x.\:x\:x)$
+\end{center}
+Thus, regardless of the evaluation strategy used $q$ can only be evaluated to itself with $q \rightarrow q$. We can
+then construct an infinite evaluation chain of the form $q \rightarrow q \rightarrow q \rightarrow ...$ where $q$ is not
+in normal form. Thus $q$ is a counterexample that refutes the termination property for $\lambda$-Calculus.
+
+Therefore we've proved that the Termination property does not hold for $\lambda$-Calculus.
+
+\end {document}
