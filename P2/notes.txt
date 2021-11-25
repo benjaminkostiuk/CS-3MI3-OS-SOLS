@@ -1,0 +1,6 @@
+Grade: 95.74%
+TA comments: None
+
+Submission Notes: I've made a couple fixes since submission
+- Fixed a bug in relabel for lambda expressions
+- Removed eval from the functions in ULC2.hs
