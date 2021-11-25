@@ -1,0 +1,298 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+\usepackage{mdwtab}
+\usepackage{mathpartir}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{3MI3 Assignment 6 Solution}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Assignment 6}}\\[6mm]
+\end{center}
+
+\medskip
+
+\section{Solution Set}
+
+\subsection{Q1}
+
+We assume the syntax and semantics for TAE as defined in the slides for topic 4 and 7.
+We define the syntax for a \emph{logical and} operator, and \emph{arithmetic addition} operator with the
+following syntax in EBNF:
+
+\begin{verbatim}
+    t ::= ...
+        | and t t
+        | plus t t
+
+    v ::= ...
+    nv ::= ...
+    T ::= ...
+\end{verbatim}
+Where \verb|t| defines terms, \verb|v| values, \verb|nv| numerical values and \verb|T| the set of types for TAE as given in the slides.
+We add our logical and operator \verb|and|, as well as our arithmetic addition operator \verb|plus| to the definition
+of \verb|t|.
+
+We use the same set of types \verb|T| as defined in slide set 7 and assume any previously defined typing rules hold.
+
+\begin{enumerate}[(a)]
+    \item We define the following typing rules for our logical and operator \verb|and|:
+\begin{center}
+    \begin{equation}
+        \tag{T-And}
+        \inferrule{
+            t_1 : \texttt{Bool}
+            \:\:\and
+            t_2 : \texttt{Bool}
+        }
+        {
+            \texttt{and} \:\: t_1 \:\: t_2 : \texttt{Bool}
+        }
+    \end{equation}
+\end{center}
+
+\medskip
+    \item We define the following typing rules for our arithmetic addition operator \verb|plus|:
+\begin{center}
+    \begin{equation}
+        \tag{T-Plus}
+        \inferrule{
+            t_1 : \texttt{Nat}
+            \:\:\and
+            t_2 : \texttt{Nat}
+        }
+        {
+            \texttt{plus} \:\: t_1 \:\: t_2 : \texttt{Nat}
+        }
+    \end{equation}
+\end{center}
+\end{enumerate}
+
+\subsection{Q2}
+
+We will prove the property that every subterm of a well-typed term is also well-typed, for all
+terms in TAE. Formally, if $t_1$ is a subterm of term $t : \alpha$, then we have $t_1 : \beta$ with
+$\alpha, \beta \in \texttt{T}$, $\texttt{T}$ the set of types in TAE.
+We will prove this property holds by induction on the typing derivation $t : \alpha$. We consider the typing
+derivations defined in the slides for topic 7.
+
+\medskip
+\emph{Base case.} The base case denotes typing derivations on terms for which there does not exists any sub-typing
+derivations. The possible typing derivations are of the following:
+
+\medskip
+\textbf{Case}: T-True, T-False, T-Zero\\
+If T-True is the final typing derivation we know $t = \texttt{true}$ and $\texttt{T} = \texttt{Bool}$. Since
+\verb|true| does not have any subterms, the left hand side of our implication is false, thus our property is
+vacuously true. We can apply the same argument for T-False and T-Zero.
+
+Thus, our base case holds.
+
+\medskip
+\emph{Induction step.} We assume that for all typing sub-derivations the above property holds.
+We will prove that for the final typing derivation our property holds. The typing derivation must be one of the
+following:
+
+\medskip
+\textbf{Case}: T-If\\
+If T-If was the last typing derivation we know $t = \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : \texttt{T}$,
+and have the premises that $t_1 : \texttt{Bool}$, $t_2 : \texttt{T}$ and $t_3 : \texttt{T}$. By our induction hypothesis we know
+that if $t_1$ is well typed then all of its subterms are well-typed. Since $t_1 : \texttt{Bool}$ we have that all subterms of $t_1$
+are well-typed. We can apply the same argument for $t_2$ and $t_3$. Thus, all subterms of $t_1$, $t_2$ and $t_3$ are well-typed.
+Therefore for our term $t : \texttt{T}$ we've shown $t_1$, $t_2$ and $t_3$ are well-typed by our premise, and all subterms of $t_1$, $t_2$
+and $t_3$ are well-typed, thus all subterms of $t$ must be well-typed. 
+Therefore our property holds for the T-If case. 
+
+\medskip
+\textbf{Case}: T-Pred\\
+If T-Pred was the last typing derivation we know $t = \texttt{pred}~t_1 : \texttt{Nat}$, and have the premise
+that $t_1 : \texttt{Nat}$. By our induction hypothesis and since we know that $t_1$ is well-typed because of our premise,
+we know that all subterms of $t_1$ are also well-typed. Thus, for our term $t : \texttt{Nat}$ we've show that
+$t_1$ is well-typed and all subterms of $t_1$ are well-typed, therefore all all subterms of $t$ are well typed.
+Therefore our property holds for the T-Pred case.
+
+\medskip
+\textbf{Case}: T-Succ\\
+We can prove the T-Succ case similar to T-Pred. If T-Succ is the last typing derivation we know $t = \texttt{succ}~t_1
+ : \texttt{Nat}$, and we have the premise that $t_1 : \texttt{Nat}$. By supplying our induction hypothesis with
+our premise that $t_1$ is well-typed we have that all subterms of $t_1$ are also well-typed. 
+Thus, for our term $t : \texttt{Nat}$ we've show that $t_1$ is well-typed and all subterms of $t_1$ are 
+well-typed, therefore all all subterms of $t$ are well typed.
+Therefore our property holds for the T-Succ case.
+
+\medskip
+\textbf{Case}: T-IsZero\\
+We can prove the T-IsZero case similar to T-Pred. If T-IsZero was the last typing derivation we know $t = \texttt{iszero}~t_1
+ : \texttt{Bool}$, and have the premise that $t_1 : \texttt{Nat}$. By our induction hypothesis and since we 
+know that $t_1$ is well-typed because of our premise, we know that all subterms of $t_1$ are also well-typed. 
+Thus, for our term $t : \texttt{Bool}$ we've show that $t_1$ is well-typed and all subterms of $t_1$ are 
+well-typed, therefore all all subterms of $t$ are well typed.
+Therefore our property holds for the T-IsZero case.
+
+\medskip
+We have shown that for all possible typing derivations over $t$ over property holds. Therefore our induction step holds.
+
+\medskip
+Thus, we've shown that every subterm of a well-typed term is also well-typed, for all terms in TAE.\qed
+
+\subsection{Q3}
+We will prove the property of preservation holds for all terms in TAE. Formally, for terms $t, t'$ and type
+\verb|T| in TAE the following holds:
+$$t : \texttt{T} \land t \rightarrow t' \implies t' : \texttt{T}$$
+We will prove the property of preservation holds by induction on the derivation $t \rightarrow t'$.
+
+\medskip
+\emph{Base case.} The base case denotes the final derivation where $t \rightarrow t'$ will yield a value instead
+of a term evaluatable by a sub-derivation. The possible derivations that yield a value are of the following:
+
+\medskip
+\textbf{Case}: E-IfTrue, E-IfFalse\\
+If E-IfTrue was the last derivation and yields a value, we know $t = \texttt{if}\:\texttt{true}\:\texttt{then}\:
+t_2\:\texttt{else}\:t_3$ and $t' = t_2$ with $t_2$ being some value. The only typing rule we can apply to $t$ is
+T-If, thus we know $t : \texttt{T}$, $t_2 : \texttt{T}$ and $t_3 : \texttt{T}$ with $\texttt{T}$ a type in TAE. Since
+$t : \texttt{T}$ and $t_2 = t' : \texttt{T}$ for the derivation $t \rightarrow t'$ of E-IfTrue our, property holds.
+We can prove E-IfFalse using the same argument, swapping $t' = t_3$. Thus, our property of preservation holds for E-IfTrue
+and E-IfFalse.
+
+\medskip
+\textbf{Case}: E-PredZero\\
+If E-PredZero was the last derivation we immediately know $t = \texttt{pred}\:0$ and $t' = 0$, with $t'$ a value.
+By T-Pred we immediately know $t : \texttt{Nat}$, and by T-Zero we know $t' : \texttt{Nat}$. Thus, our property
+of preservation holds for the E-PredZero case.
+
+\medskip
+\textbf{Case}: E-PredSucc\\
+If E-PredSucc was the last derivation we know  $t = \texttt{pred}\:(\texttt{succ}\:t_2)$ and $t' = t_2$,
+where $t_2$ is a numerical value. The only typing rule we can apply to $t$ is T-Pred, thus we know $t : \texttt{Nat}$
+and $\texttt{succ}\:t_2 : \texttt{Nat}$. By the inversion lemma we know $\texttt{succ}\:t_2 : R \implies R = \texttt{Nat} \land
+t_2 : \texttt{Nat}$. Therefore we know $t : \texttt{Nat}$ and $t_2 = t : \texttt{Nat}$ for the derivation $t \rightarrow t'$ of
+E-PredSucc. Thus, our property holds.
+
+\medskip
+\textbf{Case}: E-IsZeroZero\\
+If E-IsZeroZero was the last derivation we immediately know $t = \texttt{iszero}\:0$ and $t' = \texttt{true}$, with
+$t'$ a value. We can only apply T-IsZero to $t$, thus we know $t : \texttt{Bool}$, and by T-True we know $t' : \texttt{Bool}$
+as well. Thus, our property of preservation holds for the E-IsZeroZero case.
+
+\medskip
+\textbf{Case}: E-IsZeroSucc\\
+If E-IsZeroSucc was the last derivation we know $t = \texttt{iszero}\:(\texttt{succ}\:t_2)$ with $t_2$ a numerical value,
+and we know $t' = \texttt{false}$. The only typing rule we can apply to $t$ is T-IsZero, thus we know $t : \texttt{Bool}$, 
+and by T-False we know $t' : \texttt{Bool}$ as well. Therefore we know $t : \texttt{Bool}$ and $t' : \texttt{Bool}$ for the
+derivation $t \rightarrow t'$ of E-IsZeroSucc. Thus, our property holds.
+
+\medskip
+Thus, our base case holds.
+
+\medskip
+\emph{Induction step.} We assume that for all sub-derivations of $t \rightarrow t'$ the property of preservation
+holds. We will prove that for all possible derivations $t \rightarrow t'$ the property holds. The derivation $t
+\rightarrow t'$ must be one of the following:
+
+\medskip
+\textbf{Case}: E-IfTrue, E-IfFalse\\
+We can prove the cases of E-IfTrue and E-IfFalse in exactly the same manner as for the base case, this time assuming that
+the derivation $t \rightarrow t'$ for E-IfTrue and E-IfFalse do not yield a value, thus $t'$ is not a value.
+Thus, our property holds for the case E-IfTrue and E-IfFalse
+
+\medskip
+\textbf{Case}: E-If\\
+If E-IF was the last derivation, we know $t = \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3$, 
+$t' = \texttt{if}\:t_1'\:\texttt{then}\:t_2\:\texttt{else}\:t_3$ and we have the premise that $t_1 \rightarrow t_1'$.
+The only typing rule we can apply to $t$ is T-If. From T-If we know $t_1 : \texttt{Bool}$, $t_2 : \texttt{T}$,
+$t_3 : \texttt{T}$ and $t : \texttt{T}$ with $\texttt{T}$ a type in TAE. By our induction hypothesis we have
+$t_1 : \texttt{T} \land t_1 \rightarrow t_1' \implies t_1' : \texttt{T}$. Since we have the premises $t_1 : \texttt{Bool}$
+and $t_1 \rightarrow t_1'$ we can conclude $t_1' : \texttt{Bool}$. Since $t' = \texttt{if}\:t_1'\:\texttt{then}
+\:t_2\:\texttt{else}\:t_3$, with $t_1' : \texttt{Bool}$, $t_2 : \texttt{T}$ and $t_3 : \texttt{T}$, by T-If we can
+show $t' : \texttt{T}$.
+Thus, we've shown the property of preservation holds if the last derivation is E-If.
+
+
+\medskip
+\textbf{Case}: E-Succ\\
+If E-Succ was the last derivation, we know $t = \texttt{succ}\:t_1$, $t' = \texttt{succ}\:t_1'$ and have the
+premise that $t_1 \rightarrow t_1'$. Since $t = \texttt{succ}\:t_1$, we can only apply the typing derivation
+T-Succ. From T-Succ we know $t : \texttt{Nat}$ and have the premise $t_1 : \texttt{Nat}$. By our induction
+hypothesis we have $t_1 : \texttt{T} \land t_1 \rightarrow t_1' \implies t_1' : \texttt{T}$. Since we have the premises
+$t_1 : \texttt{Nat}$ and $t_1 \rightarrow t_1'$ we can conclude $t_1' : \texttt{Nat}$. We now know $t_1 : \texttt{Nat}$
+and $t_1' = \texttt{succ}\:t_1'$, then by T-Succ we can show $t' : \texttt{Nat}$.
+Thus, we've shown the property of preservation holds if the last derivation is E-Succ.
+
+\medskip
+\textbf{Case}: E-Pred\\
+We proceed in the same manner as with E-Succ. If 
+If E-Pred was the last derivation, we know $t = \texttt{pred}\:t_1$, $t' = \texttt{pred}\:t_1'$ and have the
+premise that $t_1 \rightarrow t_1'$. Since $t = \texttt{succ}\:t_1$, we can only apply the typing derivation
+T-Pred. From T-Pred we know $t : \texttt{Nat}$ and have the premise $t_1 : \texttt{Nat}$. By our induction
+hypothesis we have $t_1 : \texttt{T} \land t_1 \rightarrow t_1' \implies t_1' : \texttt{T}$. Since we have the premises
+$t_1 : \texttt{Nat}$ and $t_1 \rightarrow t_1'$ we can conclude $t_1' : \texttt{Nat}$. We now know $t_1 : \texttt{Nat}$
+and $t_1' = \texttt{pred}\:t_1'$, then by T-Pred we can show $t' : \texttt{Nat}$.
+Thus, we've shown the property of preservation holds if the last derivation is E-Pred.
+
+\medskip
+\textbf{Case}: E-IsZero\\
+We can prove the E-IsZero case in similar fashion to the E-Succ case.
+If E-IsZero was the last derivation, we know $t = \texttt{iszero}\:t_1$, $t' = \texttt{iszero}\:t_1'$ and have the
+premise that $t_1 \rightarrow t_1'$. Since $t = \texttt{iszero}\:t_1$, we can only apply the typing derivation
+T-IsZero. From T-IsZero we know $t : \texttt{Bool}$ and have the premise $t_1 : \texttt{Nat}$. By our induction
+hypothesis we have $t_1 : \texttt{T} \land t_1 \rightarrow t_1' \implies t_1' : \texttt{T}$. Since we have the premises
+$t_1 : \texttt{Nat}$ and $t_1 \rightarrow t_1'$ we can conclude $t_1' : \texttt{Nat}$. We now know $t_1 : \texttt{Nat}$
+and $t_1' = \texttt{pred}\:t_1'$, then by T-IsZero we can show $t' : \texttt{Bool}$.
+Thus, we've shown the property of preservation holds if the last derivation is E-IsZero.
+
+\medskip
+We've shown our property holds over all cases. Therefore our induction step holds.\\
+We have shown that for all possible derivations $t \rightarrow t'$ our property of preservation holds, thus
+we've shown the property of preservation holds for all terms in TAE.\qed
+
+\end {document}
