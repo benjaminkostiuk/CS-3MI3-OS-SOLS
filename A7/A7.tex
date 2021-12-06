@@ -1,0 +1,377 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+% \usepackage{mdwtab}
+\usepackage{mathpartir}
+\usepackage{flagderiv}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{3MI3 Assignment 7}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Assignment 7}}\\[6mm]
+
+\end{center}
+
+\medskip
+
+\section{Solution Set}
+
+\subsection{Q1}
+
+As described in the slides for topics 7 and 8, when defining a typing relation over the set of terms $\mathcal{T}$,
+the typing relation is not always total. Thus $dom(:) \subseteq \mathcal{T}$, with the set of terms that are syntactically
+correct, but semantically incorrect $\mathcal{W} \subseteq \mathcal{T} \setminus dom(:)$. This is to say that all
+terms that are well-typeable must be evaluatable under our semantics to a value. While $\Omega$ is a 
+syntactically correct, semantically it represents an incorrect term in lambda calculus, being unable to evaluate to a value.
+Additionally, we cannot type these recursive forms since pure simply-typed lambda caluclus only
+allows us to assign a base type to values. Since $\Omega$ will never evaluate to a value we cannot
+assign a base type to build up a well-typed definition.
+Therefore, $\Omega$ cannot be well-typed.
+
+\subsection{Q2}
+We can show the following expressions have the indicated types by deriving their types formally.
+
+\begin{enumerate}[(a)]
+    \item Show $f : Bool \Rightarrow Bool \vdash f\:(\texttt{if false then true else false}) : Bool$
+    \begin{flagderiv}
+        \assume{}{f : Bool \Rightarrow Bool \vdash f\:(\texttt{if false then true else false})}{Assume}
+        
+        \assume{}{f : Bool \Rightarrow Bool  \vdash f}{Assume}
+        \conclude{}{f : Bool \Rightarrow Bool  \vdash f : Bool \Rightarrow Bool}{T-Var on 2}
+        
+        \assume{}{f : Bool \Rightarrow Bool  \vdash \texttt{if false then true else false}}{Assume}
+        
+        \assume{}{f : Bool \Rightarrow Bool  \vdash \texttt{false}}{Assume}
+        \step{}{Bool}{T-False on (5)}
+        \conclude{}{f : Bool \Rightarrow Bool  \vdash \texttt{false}  : Bool}{T-Intro on (5), (6)}
+    
+        \assume{}{f : Bool \Rightarrow Bool  \vdash \texttt{true}}{Assume}
+        \step{}{Bool}{T-True on (8)}
+        \conclude{}{f : Bool \Rightarrow Bool  \vdash \texttt{true}  : Bool}{T-Intro on (8), (9)}
+        
+        \assume{}{f : Bool \Rightarrow Bool  \vdash \texttt{false}}{Assume}
+        \step{}{Bool}{T-False on (11)}
+        \conclude{}{f : Bool \Rightarrow Bool  \vdash \texttt{false}  : Bool}{T-Intro on (11), (12)}
+    
+        \step{}{Bool}{T-If on (4), (7), (10), (13)}
+        \conclude{}{f : Bool \Rightarrow Bool  \vdash \texttt{if false then true else false}: Bool}{T-Intro on (4), (14)}
+        \conclude{}{f : Bool \Rightarrow Bool \vdash f\:(\texttt{if false then true else false}) : Bool}{T-App on (3), (15)}
+    \end{flagderiv}
+
+    \item Show $f : Bool \Rightarrow Bool \vdash \lambda x : Bool.\:f\:(\texttt{if}\:x\:\texttt{then false else}\:x) : Bool \Rightarrow Bool$
+    \begin{flagderiv}
+        \assume{}{f : Bool \Rightarrow Bool \vdash \lambda x : Bool.\:f\:(\texttt{if}\:x\:\texttt{then false else}\:x)}{Assume}
+        \assume{}{f : Bool \Rightarrow Bool, x : Bool \vdash f\:(\texttt{if}\:x\:\texttt{then false else}\:x)}{Assume}
+        
+        \assume{}{f : Bool \Rightarrow Bool, x : Bool \vdash f}{Assume}
+        \conclude{}{f : Bool \Rightarrow Bool, x : Bool \vdash f : Bool \Rightarrow Bool}{T-Var on 3}
+
+        \assume{}{f : Bool \Rightarrow Bool, x : Bool \vdash \texttt{if}\:x\:\texttt{then false else}\:x}{Assume}
+        \assume{}{f : Bool \Rightarrow Bool, x : Bool \vdash x}{Assume}
+        \conclude{}{f : Bool \Rightarrow Bool, x : Bool \vdash x : Bool}{T-Var on (6)}
+        \assume{}{f : Bool \Rightarrow Bool, x : Bool \vdash \texttt{false}}{Assume}
+        \step{}{Bool}{T-False on (8)}
+        \conclude{}{f : Bool \Rightarrow Bool, x : Bool \vdash \texttt{false}: Bool}{T-Intro on (8), (9)}        
+        \assume{}{f : Bool \Rightarrow Bool, x : Bool \vdash x}{Assume}
+        \conclude{}{f : Bool \Rightarrow Bool, x : Bool \vdash x : Bool}{T-Var on (11)}
+        \step{}{Bool}{T-If on 5, 7, 10, 12}
+        \conclude{}{f : Bool \Rightarrow Bool, x : Bool \vdash \texttt{if}\:x\:\texttt{then false else}\:x : Bool}{T-Intro on (5), (13)}
+
+        \conclude{}{f : Bool \Rightarrow Bool, x : Bool \vdash f\:(\texttt{if}\:x\:\texttt{then false else}\:x) : Bool}{T-App on (4), (14)}
+        \conclude{}{f : Bool \Rightarrow Bool \vdash \lambda x : Bool.\:f\:(\texttt{if}\:x\:\texttt{then false else}\:x) : Bool \Rightarrow Bool}{T-Abs on (15)}
+    \end{flagderiv}
+
+\end{enumerate}
+
+\subsection{Q3}
+
+We will prove the property that if $\Gamma \vdash t : T$ and $\Delta$ is a permutation of $\Gamma$, then $\Delta \vdash t : T$
+and $\texttt{depth}(\Gamma \vdash t: T) = \texttt{depth}(\Delta \vdash t: T)$, with depth as defined below.
+We will prove this property holds by induction over typing derivations $\Gamma \vdash t: T$. We consider the definition of simply-typed pure
+lambda calculus and its typing derivations presented in the slides for topic 7 and 8.
+
+\medskip
+We define a permutation of elements in a set to be the rearrangement of those elements in a linear order different from the set's original
+linear ordering. A permutation of a set of elements does not alter the elements the set contains.
+
+\medskip
+We define the \emph{depth} of a typing derivation to be the the number of typing ``steps'' to fully type a 
+well-typeable term $t$. We define depth by cases as follows:\\
+\texttt{depth}($\Gamma \vdash \texttt{true} : \texttt{Bool}) = 1$\\
+\texttt{depth}($\Gamma \vdash \texttt{false} : \texttt{Bool}) = 1$\\
+\texttt{depth}($\Gamma \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T) = 1 ~+$\\
+    $~~~~\textrm{max}(\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}),
+    \texttt{depth}(\Gamma \vdash t_2 : T),
+    \texttt{depth}(\Gamma \vdash t_3 : T))$\\
+\texttt{depth}($\Gamma \vdash x : T) = 1$\\
+\texttt{depth}($\Gamma \vdash \lambda x : T_1 . \: t_2 : T_1 \Rightarrow T_2) =  1 + 
+    \texttt{depth}(\Gamma, x: T_1 \vdash t_2: T_2)$\\
+\texttt{depth}($\Gamma \vdash t_1\:\:t_2 : T_2) = 1 + \textrm{max}(
+    \texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2),~
+    \texttt{depth}(\Gamma \vdash t_2 : T_1))$\\
+
+\medskip
+\emph{Base case.} The base case denotes typing derivations on terms for which there does not exist any sub-typing derivations.
+The possible typing derivations are of the following:
+
+\medskip
+\textbf{Case}: T-True, T-False\\
+If T-True is the final typing derivation we know t = \texttt{true}, T = \texttt{Bool}. To type \texttt{true} by
+T-True we need no typing information so we can ignore $\Gamma$, and subsequently $\Delta$.
+By T-True we know $\texttt{true} : \texttt{Bool}$, thus we can attach our irrelevant permutated typing context to obtain
+$\Delta \vdash \texttt{true}: \texttt{Bool}$. Therefore we have $\Delta \vdash t : T$.
+
+By the defintion of depth we know $\texttt{depth}(\Gamma \vdash \texttt{true} : \texttt{Bool}) = 1 = 
+\texttt{depth}(\Delta \vdash \texttt{true} : \texttt{Bool})$ thus we know both derivations have the same depth.
+
+Therefore our property holds if T-True is the final typing derivation.
+We can prove the T-False case in the same way.
+
+\medskip
+\textbf{Case}: T-Var\\
+If T-Var is the final typing derivation, we have $t = x$, $T = T$, and have the premise that $x : T \in \Gamma$. Since we know $\Delta$ is
+a permutation of $\Gamma$ and permutations of a set contain all elements of the original set, we know $x : T \in \Delta$. Since we have 
+$x : T \in \Delta$, by T-Var we know $\Delta \vdash x : T$, which is $\Delta \vdash t: T$. 
+
+By the defintion of depth we know $\texttt{depth}(\Gamma \vdash x : T) = 1 = 
+\texttt{depth}(\Delta \vdash x : T)$, thus we know both derivations have the same depth.
+
+Therefore our property holds for the T-Var case.
+
+\medskip
+Thus our base case holds.
+
+\medskip
+\emph{Induction step.} We assume for all typing sub-derivations our property holds. We will prove for the reminaing typing derivations
+that our property holds. The typing derivation must be one of the following:
+
+\medskip
+\textbf{Case}: T-If\\
+If T-If was the final typing derivation we know $t = \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3$ and
+have the premises that in the typing context $\Gamma$ we know $t_1 : \texttt{Bool}$, $t_2 : T$ and $t_3 : T$. Since we
+know $\Delta$ is a permutation of $\Gamma$ and have the premise $\Gamma \vdash t_1 : \texttt{Bool}$, by our 
+induction hypothesis on $t_1$ we know $\Delta \vdash t_1 : \texttt{Bool}$. By applying the induction hypothesis on $t_2$ and
+$t_3$ we similarly know $\Delta \vdash t_2 : T$ and $\Delta \vdash t_3 : T$. Since we have the previous premises by
+T-If we can conclude $\Delta \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T$. 
+
+By the definition of depth we know \texttt{depth}($\Gamma \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T) = 1 + 
+\textrm{max}(\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}), \texttt{depth}(\Gamma \vdash t_2 : T), \texttt{depth}(\Gamma \vdash t_3 : T))$.
+By our induction hypothesis on $t_1$ we know $\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}) = \texttt{depth}(\Delta \vdash t_1 : \texttt{Bool})$,
+and can prove the derivations for $t_2$ and $t_3$ have the same depth similarly. Thus we know 
+$\textrm{max}(\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}), \texttt{depth}(\Gamma \vdash t_2 : T), \texttt{depth}(\Gamma \vdash t_3 : T))$
+= $\textrm{max}(\texttt{depth}(\Delta \vdash t_1 : \texttt{Bool}), \texttt{depth}(\Delta \vdash t_2 : T), \texttt{depth}(\Delta \vdash t_3 : T))$,
+thus it follows that $(\Gamma \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T) = 
+(\Delta \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T)$, both derivations have the same depth.
+
+Therefore our property holds for the T-If case.
+
+\medskip
+\textbf{Case}: T-Abs\\
+If T-Abs was the final typing derivation we have $t = \lambda x: T_1.\:t_2$ and $T = T_1 \Rightarrow T_2$ with the premise
+$\Gamma, x: T_1 \vdash t_2 : T_2$. Since $\Delta$ is a permutation of $\Gamma$, we know $\Delta, x: T_1$ is a permutation of
+$\Gamma, x: T_1$. Therefore by our induction hypothesis on $t_2$ with our premise $\Gamma, x: T_1 \vdash t_2 : T_2$
+and $\Delta, x: T_1$ a permutation of $\Gamma x: T_1$ we know $\Delta, x: T_1 \vdash t_2 : T_2$. Thus, by T-Abs we can show
+$\Delta \vdash \lambda x : T_1.\: t_2 : T_1 \Rightarrow T_2$. Therefore we have $\Delta \vdash t : T$.
+
+By the definition of depth we know \texttt{depth}($\Gamma \vdash \lambda x : T_1 . \: t_2 : T_1 \Rightarrow T_2) =  1 + 
+\texttt{depth}(\Gamma, x: T_1 \vdash t_2: T_2)$. By our induction hypothesis on $t_2$, and since we know
+$\Delta, x: T_1$ is a permutation of $\Gamma, x: T_1$ we can conclude 
+$\texttt{depth}(\Gamma, x: T_1 \vdash t_2: T_2) = \texttt{depth}(\Delta, x: T_1 \vdash t_2: T_2)$. Therefore by the defintion of depth
+we know $\texttt{depth}(\Gamma \vdash \lambda x : T_1 . \: t_2 : T_1 \Rightarrow T_2) = \texttt{depth}(\Delta \vdash \lambda x : T_1 . \: t_2 : T_1 \Rightarrow T_2)$,
+the two derivations have the same depth.
+
+Therefore our property holds for T-Abs.
+
+\medskip
+\textbf{Case}: T-App\\
+If T-App was the final typing derivation we have $t = t_1\:\:t_2$ and $T = T_2$, with the premises $\Gamma \vdash t_1 : T_1 \Rightarrow T_2$
+and $\Gamma \vdash t_2 : T_1$. Since we know $\Delta$ is a permutation of $\Gamma$ and have the premise $\Gamma \vdash t_1 : T_1 \Rightarrow T_2$,
+by our induction hypothesis on $t_1$ we know $\Delta \vdash t_1 : T_1 \Rightarrow T_2$. Similarly since we have the premise $\Gamma \vdash t_2 : T_1$,
+by our induction hypothesis on $t_2$ we know $\Delta \vdash t_2 : T_1$. Thus, by T-App we can show $\Delta \vdash t_1\:\:t_2 : T_2$.
+Therefore we have $\Delta \vdash t : T$.
+
+By the definition of depth we know \texttt{depth}($\Gamma \vdash t_1\:\:t_2 : T_2) = 1 + \textrm{max}(
+\texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2),~\texttt{depth}(\Gamma \vdash t_2 : T_1))$. Since we know
+$\Delta$ is a permutation of $\Gamma$, by our induction hypothesis on $t_1$ we know 
+$\texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2) = \texttt{depth}(\Delta \vdash t_1 : T_1 \Rightarrow T_2)$. Similarly
+by our induction hypothesis on $t_2$ we know $\texttt{depth}(\Gamma \vdash t_2 : T_1) = \texttt{depth}(\Delta \vdash t_2 : T_1)$.
+Thus their maximum will be the same, $\textrm{max}(
+    \texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2),~\texttt{depth}(\Gamma \vdash t_2 : T_1))
+= \textrm{max}(
+    \texttt{depth}(\Delta \vdash t_1 : T_1 \Rightarrow T_2),~\texttt{depth}(\Delta \vdash t_2 : T_1))$.
+Then, by the definition of depth we know both derivations have the same depth with
+$\texttt{depth}(\Gamma \vdash t_1\:\:t_2 : T_2) = \texttt{depth}(\Delta \vdash t_1\:\:t_2 : T_2)$.
+
+Therefore our property holds for T-App.
+
+We have shown that for all possible typing derivations our property holds. Therefore our induction step holds.
+
+Thus we've shown that if $\Gamma \vdash t : T$ and $\Delta$ is a permutation of $\Gamma$, then $\Delta \vdash t : T$
+and the depth of both derivations is the same, i.e. $\texttt{depth}(\Gamma \vdash t : T) = \texttt{depth}(\Delta \vdash t : T)$.
+
+\qed
+
+\subsection{Q4}
+
+We will prove the property that if $\Gamma \vdash t : T$ and $x \notin dom(\Gamma)$, then $\Gamma, x: S \vdash t : T$ and the latter derivation
+has the same depth as the former, or formally $\texttt{depth}(\Gamma \vdash t : T) = \texttt{depth}(\Gamma,x : S \vdash t : T)$, with the definition
+of depth defined in Q3.
+We will prove this property holds by induction over typing derivations $\Gamma \vdash t: T$. We consider the definition of simply-typed pure
+lambda calculus and its typing derivations presented in the slides for topic 7 and 8.
+
+\medskip
+\emph{Base case.} The base case denotes typing derivations on terms for which there does not exist any sub-typing derivations.
+The possible typing derivations are of the following:
+
+\medskip
+\textbf{Case}: T-True, T-False\\
+If T-True is the final typing derivation we know t = \texttt{true}, T = \texttt{Bool}. T-True requires no typing
+context to type \texttt{true} as \texttt{Bool}, thus we have $\Gamma, x: S \vdash \texttt{true}: \texttt{Bool}$ by T-True.
+Therefore we've proven $\Gamma, x : S \vdash t : T$.
+
+By the defintion of depth we know $\texttt{depth}(\Gamma \vdash \texttt{true} : \texttt{Bool}) = 1 = 
+\texttt{depth}(\Gamma, x: S \vdash \texttt{true} : \texttt{Bool})$ thus we know both derivations have the same depth.
+
+
+Therefore our property holds if T-True is the final typing derivation.
+We can prove the T-False case in the same way.
+
+\medskip
+\textbf{Case}: T-Var\\
+If T-Var is the final typing derivation, we have $t = y$, $T = T$, and have the premise that $y : T \in \Gamma$. 
+If $y = x$, then by our premise $x : T \in \Gamma$ we know $x \notin dom(\Gamma)$ is false. Thus, the left side 
+of our implication is false and our property is vacuously true. If $y \neq x$, then we know $y : T \in \Gamma$
+and $y : T \in \Gamma, x : S$, since growing our typing context will not remove $y$ from $dom(\Gamma)$. By T-Var
+we then have $\Gamma, x: S \vdash y : T$, which is $\Gamma, x : S \vdash t : T$.
+
+By the defintion of depth we know $\texttt{depth}(\Gamma \vdash y : T) = 1 = 
+\texttt{depth}(\Gamma, x: S \vdash y : T)$, thus we know both derivations have the same depth.
+
+Therefore our property holds for the T-Var case.
+
+\medskip
+Thus, our base case holds.
+
+\medskip
+\emph{Induction step.} We assume for all typing sub-derivations our property holds. We will prove for the reminaing typing derivations
+that our property holds. The typing derivation must be one of the following:
+
+\medskip
+\textbf{Case}: T-If\\
+If T-If was the final typing derivation we know $t = \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3$ and
+have the premises $\Gamma \vdash t_1 : \texttt{Bool}$, $\Gamma \vdash t_2 : T$ and $\Gamma \vdash t_3 : T$. Since we
+know $x \notin dom(\Gamma)$ and have the premise $\Gamma \vdash t_1 : \texttt{Bool}$, by our 
+induction hypothesis on $t_1$ we know $\Gamma, x: S \vdash t_1 : \texttt{Bool}$. By applying the induction hypothesis on $t_2$ and
+$t_3$ we similarly know $\Gamma,x: S \vdash t_2 : T$ and $\Gamma, x: S \vdash t_3 : T$. Since we have the previous premises by
+T-If we can conclude $\Gamma, x : S \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T$. 
+
+By the definition of depth we know \texttt{depth}($\Gamma \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T) = 1 + 
+\textrm{max}(\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}), \texttt{depth}(\Gamma \vdash t_2 : T), \texttt{depth}(\Gamma \vdash t_3 : T))$.
+By our induction hypothesis on $t_1$ we know $\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}) = \texttt{depth}(\Gamma,x:S \vdash t_1 : \texttt{Bool})$,
+and can prove the derivations for $t_2$ and $t_3$ have the same depth similarly. Thus we know 
+$\textrm{max}(\texttt{depth}(\Gamma \vdash t_1 : \texttt{Bool}), \texttt{depth}(\Gamma \vdash t_2 : T), \texttt{depth}(\Gamma \vdash t_3 : T))$
+= $\textrm{max}(\texttt{depth}(\Gamma, x:S \vdash t_1 : \texttt{Bool}), \texttt{depth}(\Gamma, x: S \vdash t_2 : T), \texttt{depth}(\Gamma, x: S \vdash t_3 : T))$,
+thus it follows that $(\Gamma \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T) = 
+(\Gamma, x: S \vdash \texttt{if}\:t_1\:\texttt{then}\:t_2\:\texttt{else}\:t_3 : T)$, both derivations have the same depth.
+
+Therefore our property holds for the T-If case.
+
+\medskip
+\textbf{Case}: T-Abs\\
+If T-Abs was the final typing derivation we have $t = \lambda y: T_1.\:t_2$ and $T = T_1 \Rightarrow T_2$ with the premise
+$\Gamma, y: T_1 \vdash t_2 : T_2$. Since we know $x \notin dom(\Gamma)$, by our induction hypothesis on $t_2$ we know
+$\Gamma, y: T_1, x: S \vdash t_2: T_2$. By the lemma of permutation we proved in Q3, we know typing derivations do not change if
+we permute the typing context. Therefore $\Gamma, y: T_1, x: S \vdash t_2: T_2$ is equivalent to $\Gamma, x: S, y: T_1 \vdash t_2: T_2$,
+swapping the ordering of $x$ and $y$. By T-Abs with the premise $\Gamma, x: S, y: T_1 \vdash t_2: T_2$ we know 
+$\Gamma, x:S \vdash \lambda y: T_1.\:t_2 : T_1 \Rightarrow T_2$. Therefore we have $\Gamma, x: S \vdash t : T$.
+
+By the definition of depth we know \texttt{depth}($\Gamma \vdash \lambda y : T_1 . \: t_2 : T_1 \Rightarrow T_2) =  1 + 
+\texttt{depth}(\Gamma, y: T_1 \vdash t_2: T_2)$. By our induction hypothesis on $t_2$ we know 
+$\texttt{depth}(\Gamma, y: T_1 \vdash t_2: T_2) = \texttt{depth}(\Gamma, y: T_1, x: S \vdash t_2: T_2)$
+and by our permutation lemma we know $\texttt{depth}(\Gamma, y: T_1, x: S \vdash t_2: T_2) = \texttt{depth}(\Gamma, x: S, y: T_1 \vdash t_2: T_2)$.
+Therefore by the defintion of depth
+we know $\texttt{depth}(\Gamma \vdash \lambda y : T_1 . \: t_2 : T_1 \Rightarrow T_2) = \texttt{depth}(\Gamma, x: S \vdash \lambda y : T_1 . \: t_2 : T_1 \Rightarrow T_2)$,
+the two derivations have the same depth.
+
+Therefore our property holds for the T-Abs case.
+
+\medskip
+\textbf{Case}: T-App\\
+If T-App was the final typing derivation we have $t = t_1\:\:t_2$ and $T = T_2$, with the premises $\Gamma \vdash t_1 : T_1 \Rightarrow T_2$
+and $\Gamma \vdash t_2 : T_1$. Since we know $x \notin dom(\Gamma)$, by our induction hypothesis on $t_1$ we know 
+$\Gamma, x: S \vdash t_1 : T_1 \Rightarrow T_2$. Similarly by our induction hypothesis on $t_2$ we know $\Gamma, x: S
+\vdash t_2 : T_1$. By the premises $\Gamma, x: S \vdash t_1 : T_1 \Rightarrow T_2$ and $\Gamma, x: S \vdash t_2 : T_1$,
+by T-App we then derive $\Gamma, x: S \vdash t_1\:\:t_2 : T_2$. Therefore we have $\Gamma, x: S \vdash t : T$.
+
+By the definition of depth we know \texttt{depth}($\Gamma \vdash t_1\:\:t_2 : T_2) = 1 + \textrm{max}(
+\texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2),~\texttt{depth}(\Gamma \vdash t_2 : T_1))$. Since we know
+$x \notin dom(\Gamma)$, by our induction hypothesis on $t_1$ we know 
+$\texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2) = \texttt{depth}(\Gamma, x: S \vdash t_1 : T_1 \Rightarrow T_2)$. Similarly
+by our induction hypothesis on $t_2$ we know $\texttt{depth}(\Gamma \vdash t_2 : T_1) = \texttt{depth}(\Gamma, x:S \vdash t_2 : T_1)$.
+Thus their maximum will be the same, $\textrm{max}(
+    \texttt{depth}(\Gamma \vdash t_1 : T_1 \Rightarrow T_2),~\texttt{depth}(\Gamma \vdash t_2 : T_1))
+= \textrm{max}(
+    \texttt{depth}(\Gamma, x: S \vdash t_1 : T_1 \Rightarrow T_2),~\texttt{depth}(\Gamma, x: S \vdash t_2 : T_1))$.
+Then, by the definition of depth we know both derivations have the same depth with
+$\texttt{depth}(\Gamma \vdash t_1\:\:t_2 : T_2) = \texttt{depth}(\Gamma, x: S \vdash t_1\:\:t_2 : T_2)$.
+
+Therefore our property holds for T-App.
+
+We have shown that for all possible typing derivations our property holds. Therefore our induction step holds.
+
+Thus we've shown that if $\Gamma \vdash t : T$ and $x \notin dom(\Gamma)$, then $\Gamma, x: S \vdash t : T$
+and $\texttt{depth}(\Gamma \vdash t : T) = \texttt{depth}(\Gamma, x : S \vdash t : T)$.
+
+\qed
+
+\end {document}
