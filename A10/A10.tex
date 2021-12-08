@@ -1,0 +1,196 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+\usepackage{mdwtab}
+\usepackage{mathpartir}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{3MI3 Assignment 10 Solution}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Assignment 10}}\\[6mm]
+  
+\end{center}
+
+\medskip
+
+\section{Solution Set}
+
+\subsection{Q1}
+We assume the syntax and semantics for our extended simply-typed $\lambda$-Calculus defined in the slides for topic 11. We propose the following extension to the syntax and semantics for pattern-matching and \textsl{match}.
+
+\begin{grammar}
+    <t> ::= \dots
+
+    <v> ::= \dots
+
+    <p> ::= \dots
+        \alt nil[<T>]
+        \alt cons[<T>] <p> <p>
+\end{grammar}
+We extend \textsl{match} with the following matching rules:
+\begin{equation}
+    { \textsl{match}(\textsl{nil}[T], \textsl{nil}[T]) = [x \mapsto x]} \tag{M-Nil}
+\end{equation}
+\begin{equation}
+    \inferrule{ \textsl{match}(p_1, v_1) = \sigma_1 \and \textsl{match}(p_2, v_2) = \sigma_2  }{ \textsl{match}(\textsl{cons}[T]\:p_1\:p_2, \textsl{cons}[T]\:v_1\:v_2) = \sigma_1 \circ \sigma_2} \tag{M-Cons}
+\end{equation}
+Where $T$ is a type and $\circ$ is function composition.
+
+\subsection{Q2}
+
+We assume the syntax and semantics for our simply-typed $\lambda$-Calculus extended with lists defined in the slides for topic 11. We define the syntax for our new terms as follows:
+
+\begin{grammar}
+    <t> ::= \dots
+    \alt index[<T>] <t> <t>
+    \alt length[<T>] <t>
+    \alt concat[<T>] <t> <t>
+    \alt filter[<T>] <t> <t>
+
+    <v> ::= \dots
+
+    <T> ::= \dots
+\end{grammar}
+
+We define the semantics of each of our new terms below.
+
+\begin{enumerate}[(a)]
+    \item List indexing
+    We define the following evaluation and typing semantics for list indexing:
+
+    \begin{equation}
+        { \textsl{index}[S]\:(\textsl{cons}[T]\:v_1\:v_2)\:0 \rightarrow v_1} \tag{E-IndexZero}
+    \end{equation}
+    \begin{equation}
+        { \textsl{index}[S]\:(\textsl{cons}[T]\:v_1\:v_2)\:(\textsl{succ}\:nv) \rightarrow \textsl{index}[S]\:v_2\:nv} \tag{E-IndexSucc}
+    \end{equation}
+    \begin{equation}
+        \inferrule{ t_1 \rightarrow t_1' }{ \textsl{index}[T]\:t_1\:t_2 \rightarrow \textsl{index}[T]\:t_1'\:t_2} \tag{E-Index1}
+    \end{equation}
+    \begin{equation}
+        \inferrule{ t_2 \rightarrow t_2' }{ \textsl{index}[T]\:v_1\:t_2 \rightarrow \textsl{index}[T]\:v_1\:t_2'} \tag{E-Index2}
+    \end{equation}
+    \begin{equation}
+        \inferrule{ \Gamma \vdash t_1 : \textsl{List T} \and \Gamma \vdash t_2 : \textsl{Nat} }{ \Gamma \vdash \textsl{index}[T]\:t_1\:t_2 : T} \tag{T-Index}
+    \end{equation}
+
+    \item Length\\
+    We define the following evaluation and typing semantics for length:
+
+    \begin{equation}
+        { \textsl{length}[S](\textsl{nil}[T]) \rightarrow 0 } \tag{E-LengthNil}
+    \end{equation}
+    \begin{equation}
+        { \textsl{length}[S](\textsl{cons}[T] \: v_1 \: v_2) \rightarrow  \textsl{succ}\:(\textsl{length}[S]\:v_2) } \tag{E-LengthCons}
+    \end{equation}
+    \begin{equation}
+        \inferrule{ t \rightarrow t' }{ \textsl{length}[T]\:t \rightarrow \textsl{length}[T]\:t' }\tag{E-Length}
+    \end{equation}
+    \begin{equation}
+        \inferrule{ \Gamma \vdash t : \textsl{List T} }{ \Gamma \vdash \textsl{length}[T]\:t : \textsl{Nat}}\tag{T-Length}
+    \end{equation}
+    
+    \item Concatenation\\
+    We define the following evaluation and typing semantics for concatenation:
+
+    \begin{equation}
+        { \textsl{concat}[S]\:(\textsl{nil}[T])\:v_2 \rightarrow v_2 } \tag{E-ConcatNil} 
+    \end{equation}
+    \begin{equation}
+        { \textsl{concat}[S]\:(\textsl{cons}[T]\:v_1\:v_2)\:v_3 \rightarrow \textsl{cons}[T]\:v_1\:(\textsl{concat}[S]\:v_2\:v_3) } \tag{E-ConcatCons} 
+    \end{equation}
+    \begin{equation}
+        \inferrule{ t_1 \rightarrow t_1' }{ \textsl{concat}[T]\:t_1\:t_2 \rightarrow \textsl{concat}[T]\:t_1'\:t_2 } \tag{E-Concat1} 
+    \end{equation}
+    \begin{equation}
+        \inferrule{ t_2 \rightarrow t_2' }{ \textsl{concat}[T]\:v_1\:t_2 \rightarrow \textsl{concat}[T]\:v_1\:t_2' } \tag{E-Concat2 } 
+    \end{equation}
+    \begin{equation}
+        \inferrule{ \Gamma \vdash t_1 : \textsl{List T} \and \Gamma \vdash t_2 : \textsl{List T} }
+        { \Gamma \vdash \textsl{concat}[T]\:t_1\:t_2 : \textsl{List T} } \tag{T-Concat} 
+    \end{equation}
+
+    \item Filtering\\
+    We define the following evaluation and typing semantics for filtering:
+
+    \begin{equation}
+        { \textsl{filter}[S]\:v_1\:(\textsl{nil}[T]) \rightarrow \textsl{nil}[T]} \tag{E-FilterNil}
+    \end{equation}
+    \begin{equation}
+        { \textsl{filter}[S]\:v_1\:(\textsl{cons}[T]\:v_2\:v_3) \rightarrow \texttt{if}\:v_1\:v_2\:\texttt{then}\: \textsl{cons}[T]\:v_2\:(\textsl{filter}[S]\:v_1\:v_3)\:\texttt{else}\:\textsl{filter}[S]\:v_1\:v_3} \tag{E-FilterCons}
+    \end{equation}
+    % \begin{equation}
+    %     \inferrule{ v_1\:v_2 \rightarrow^* \textsl{true} }
+    %     { \textsl{filter}[S]\:v_1\:(\textsl{cons}[T]\:v_2\:v_3) \rightarrow \textsl{cons}[T]\:v_2\:(\textsl{filter}[S]\:v_1\:v_3)} \tag{E-FilterCons1}
+    % \end{equation}
+    % \begin{equation}
+    %     \inferrule{ v_1\:v_2 \rightarrow^* \textsl{false} }
+    %     { \textsl{filter}[S]\:v_1\:(\textsl{cons}[T]\:v_2\:v_3) \rightarrow \textsl{filter}[S]\:v_1\:v_3} \tag{E-FilterCons2}
+    % \end{equation}
+    \begin{equation}
+        \inferrule{ t_1 \rightarrow t_1' }
+        { \textsl{filter}[T]\:t_1\:t_2 \rightarrow \textsl{filter}[T]\:t_1'\:t_2} \tag{E-Filter1}
+    \end{equation}
+    \begin{equation}
+        \inferrule{ t_2 \rightarrow t_2' }
+        { \textsl{filter}[T]\:v_1\:t_2 \rightarrow \textsl{filter}[T]\:v_1\:t_2'} \tag{E-Filter2}
+    \end{equation}
+    \begin{equation}
+        \inferrule{\Gamma \vdash t_1 : T \Rightarrow \textsl{Bool} \and \Gamma \vdash t_2 : \textsl{List T} }
+        { \Gamma \vdash \textsl{filter}[T]\:t_1\:t_2 : \textsl{List T} } \tag{T-Filter} 
+    \end{equation}
+
+
+\end{enumerate}
+
+\end {document}
