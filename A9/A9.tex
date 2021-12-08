@@ -1,0 +1,209 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+% \usepackage{mdwtab}
+\usepackage{mathpartir}
+\usepackage{flagderiv}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{3MI3 Assignment 9}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Assignment 9}}\\[6mm]
+  
+\end{center}
+
+\medskip
+
+\section{Solution Set}
+
+\subsection{Q1}
+
+We will prove the property of progress for our simply typed $\lambda$-Calculus augmented with \emph{Unit}, the sequencing operator and referencing operations. Formally we prove: if $\emptyset\:|\:\Sigma \vdash t: T$ for some term $t$, type $T$ and typing store $\Sigma$, then $t$ is a value, or else, for any $\mu$ with $\emptyset\:|\:\Sigma \vdash \mu$ there exists some term $t'$ and store $\mu'$ such that $t\:|\:\mu \rightarrow t'\:|\:\mu'$. 
+We will prove progress holds by induction on the typing derivation $\emptyset\:|\:\Sigma \vdash t : T$.
+
+\medskip
+By augmenting our previously defined simply typed $\lambda$-Calculus with \emph{Unit}, sequencing and referencing,  we do not modify our previous terms defined in our calculus, thus our previously proved progress property theorem will hold for existing cases in our augmented calculus. Therefore we focus on proving new cases unique to our augmented calculus.
+
+\medskip
+We also extend the cannonical forms lemma to include cases for \texttt{ref} $t$ and \texttt{unit} with the following definitions:
+\begin{enumerate}[(1)]
+    \item If $v$ is a value of type \emph{Unit}, then $v$ is \texttt{unit}.
+    \item If $v$ is a value of type $Ref\:T$, then $v$ is a memory location $l$.
+\end{enumerate}
+
+\medskip
+\emph{Base case}. Our base case denotes all typing derivations for which there do not exist any further sub-typing derivations. The possible typing derivations are of the following cases:
+
+\medskip
+\textbf{Case:} T-Unit\\
+If T-Unit is the final typing derivation then $t = \texttt{unit}$ and $T = Unit$. Thus $t$ is a value and our property holds.
+
+\medskip
+\textbf{Case:} T-Loc\\
+If T-Loc is the final typing derivation then $t = l$, with $l$ a memory location and $T = Ref\:T_1$ with the premise $\Sigma(l) = T_1$. Since $l$ is a value, $t$ is a value and our property holds.
+
+Thus our base case holds.
+
+\medskip
+\emph{Induction step}. We assume for all typing sub-derivations that the progress property holds. We prove for the remaining typing derivations that the progress property holds.. The typing derivation must one of the following cases:
+
+\medskip
+\textbf{Case:} T-Seq\\
+If T-Seq was the final typing derivation then $t = t_1 ; t_2$ and $T = T_2$ with the premises $\emptyset\:|\:\Sigma \vdash t_1 : Unit$ and $\emptyset\:|\:\Sigma \vdash t_2 : T_2$. By our induction hypothesis on $t_1$ for some store $\mu$ we know $t_1$ is either a value or we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. 
+If $t_1$ is a value, by the cannonical forms lemma we know $t_1 = \texttt{unit}$, thus we can apply E-SeqNext to $t$ with store $\mu$. Otherwise if we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$ then we can apply E-Seq to $t$ with $\mu$. Therefore, in all cases $t$ is either a value or we have $t\:|\:\mu \rightarrow t'\:|\:\mu'$, thus our progress property holds for the T-Seq case.
+
+\medskip
+\textbf{Case:} T-Ref\\
+If T-Ref was the final typing derivation then $t = \texttt{ref}\:t_1$, $T = Ref\: T_1$ and we have the premise $\emptyset\:|\:\Sigma \vdash t_1 : T_1$. By our induction hypothesis on $t_1$ for some store $\mu$ we know $t_1$ is either a value or we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. 
+If $t_1$ is a value then by assigning new memory location $l \notin dom(\mu)$ to store the reference for $t_1$ we can apply E-RefV to $t$ with $\mu$, thus obtaining $\mu' = \mu,l \mapsto t_1$ and $\Sigma' = \Sigma, l \mapsto T_1$ with $t\:|\:\mu \rightarrow t'\:|\:\mu'$. Otherwise, if we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$ then we can apply E-Ref to $t$ with $\mu$.
+Therefore, in all cases $t$ is either a value or we have $t\:|\:\mu \rightarrow t'\:|\:\mu'$, thus our progress property holds for the T-Ref case.
+
+\medskip
+\textbf{Case:} T-Deref\\
+If T-Deref was the final typing derivation then $t = !t_1$, $T = T_1$ with the premise $\emptyset\:|\:\Sigma \vdash t_1 : Ref\:T_1$. By our induction hypothesis on $t_1$ for some store $\mu$ we know $t_1$ is either a value or we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. 
+If $t_1$ is a value by the cannonical forms lemma we know $t_1 = l$ a memory location with the premise $\Sigma(l) = T_1$. Since $\mu$ is well typed with respect to $\Sigma$ we know $dom(\mu) = dom(\Sigma)$ and $\mu(l) : \Sigma(l)$. Thus, we have the premise $\mu(l) = v : \Sigma(l)$ for some value $v$. We can then say that we can apply E-DerefLoc to $t$ with store $\mu$. Otherwise, if we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$ we can apply E-Deref to $t$ with $\mu$. Therefore, in all cases $t$ is either a value or we have $t\:|\:\mu \rightarrow t'\:|\:\mu'$, thus our progress property holds for the T-Deref case.
+
+\medskip
+\textbf{Case:} T-Assign\\
+If T-Assign was the final typing derivation then $t = t_1 := t_2$, $T = Unit$ and we have the premises $\emptyset\:|\:\Sigma \vdash t_1 : Ref \: T_1$ and $\emptyset\:|\:\Sigma \vdash t_2 : T_1$. By our induction hypothesis for $t_1$ for some store $\mu$ we know $t_1$ is either a value or we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$, with similar being said for $t_2$. We then have 3 cases.
+If both $t_1$ and $t_2$ are values, by the cannonical forms lemma we know $t_1 = l$ a memory location with the premise $\Sigma(l) = T_1$. Since $t_2$ is also a value we can apply E-Assign to $t$ with $\mu$.
+If $t_1$ is a value and we have $t_2\:|\:\mu \rightarrow t_2'\:|\:\mu'$ we can apply E-Assign2 to $t$ with $\mu$. Lastly, if we have $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$, regardless of $t_2$ we can apply E-Assign1 to $t$ with $\mu$. Therefore, in all cases $t$ is either a value or we have $t\:|\:\mu \rightarrow t'\:|\:\mu'$, thus our progress property holds for the T-Assign case.
+
+\medskip
+Therefore our induction step holds. We have shown for all possible typing derivations the progress property holds.\\
+Thus we've shown that the progress property holds for our augmented simply typed $\lambda$-Calculus.\qed
+
+\subsection{Q2}
+
+We will prove the property of preservation holds for our simply typed $\lambda$-Calculus augmented with \emph{Unit}, the sequencing operator and referencing operations. Formally, we prove:
+$$
+    (\Gamma\:|\:\Sigma \vdash t : T) \land (t\:|\:\mu \rightarrow t'\:|\:\mu') \land (\Gamma\:|\:\Sigma \vdash \mu) \implies
+    (\exists \Sigma' \supseteq \Sigma\:|\: (\Gamma\:|\:\Sigma' \vdash t' : T) \land (\Gamma\:|\:\Sigma' \vdash \mu'))
+$$
+We will prove the above holds by induction on the evalution derivation $t\:|\:\mu \rightarrow t'\:|\:\mu'$, assuming $\mu$ is well typed with respect to a typing context $\Gamma$ and typing store $\Sigma$.
+
+\medskip
+By augmenting our previously defined simply typed $\lambda$-Calculus with \emph{Unit}, sequencing and referencing,  we do not modify our previous terms defined in our calculus. Thus our previously defined argument for proving the property of preservation, augmented with the lemma of Preservation Over Substitution, will hold for existing cases in our augmented calculus. Therefore we focus on proving new cases unique to our augmented calculus.
+
+\medskip
+We also extend our definition of the inversion lemma previously defined in the slides, deriving new definitions from our new typing rules:
+\begin{enumerate}[(1)]
+    \item $\Gamma\:|\:\Sigma \vdash \texttt{unit} : R \implies R = Unit$
+    \item $\Gamma\:|\:\Sigma \vdash (t_1 ; t_2) : R \implies \Gamma\:|\:\Sigma \vdash t_1 : Unit \land \Gamma\:|\:\Sigma \vdash t_2 : R$
+    \item $\Gamma\:|\:\Sigma \vdash l : R \implies R = Ref\:T_1 \land \Sigma(l) = T_1$
+    \item $\Gamma\:|\:\Sigma \vdash \texttt{ref}\:t_1 : R \implies R = Ref\:T_1 \land \Gamma\:|\:\Sigma \vdash t_1 : T_1$
+    \item $\Gamma\:|\:\Sigma \vdash\:!t : R \implies R = T_1 \land \Gamma\:|\:\Sigma \vdash t : Ref \: T_1$
+    \item $\Gamma\:|\:\Sigma \vdash t_1 := t_2 : R \implies R = Unit \land \Gamma\:|\:\Sigma \vdash t_1 : Ref \: T_1 \land \Gamma\:|\:\Sigma \vdash t_2 : T_1$
+\end{enumerate}
+
+\emph{Base case}. Our base case denotes the final evalutation derivation where $t\:|\:\mu \rightarrow t'\:|\:\mu'$ will yield a value. The possible evaluation derivations that could yield a value are of the following:
+
+\medskip
+\textbf{Case:} E-SeqNext\\
+If E-SeqNext was the last derivation we know $t = \texttt{unit} ; t_2$ and $t' = t_2$ with $\mu = \mu'$. The only typing derivation we can apply is T-Assign, thus we have $\Gamma\:|\:\Sigma \vdash \texttt{unit} ; t_2 : T_2$ and $T = T_2$ with the premises $\Gamma\:|\:\Sigma \vdash \texttt{unit} : Unit$ and $\Gamma\:|\:\Sigma \vdash t_2 : T_2$. 
+Setting $\Sigma' = \Sigma$ we've shown for $\Sigma' \supseteq \Sigma$ we have $\Gamma\:|\:\Sigma' \vdash t' : T$ and $\Gamma\:|\:\Sigma' \vdash \mu'$. Thus, the E-SeqNext case holds.
+
+\medskip
+\textbf{Case:} E-RefV\\
+If E-RefV was the last derivation we know $t = \texttt{ref}\:v_1$, $t' = l$, $\mu' = \mu, l \mapsto v_1$ and $\Sigma' = \Sigma, l \mapsto T_1$ with $v_1$ some value and $l$ a memory location. We also have the premises $l \notin dom(\mu)$ and $\Gamma\:|\:\Sigma \vdash v_1 : T_1$. By T-Ref with the premise $\Gamma\:|\:\Sigma \vdash v_1 : T_1$ we know $\Gamma\:|\:\Sigma \vdash \texttt{ref}\:v_1 : Ref \: T_1$, thus $T = Ref\:T_1$. 
+By T-Loc with our premise $\Sigma'(l) = T_1$ we know $\Gamma\:|\:\Sigma' \vdash l : Ref\:T_1$. Lastly, by our premises $\Gamma\:|\:\Sigma \vdash \mu$ and $l \notin dom(u)$ we know by adding $l$ to our stores $\mu'$ and $\Sigma'$ will not violate $\Gamma\:|\:\Sigma' \vdash \mu'$. Therefore, we've shown for $\Sigma' \supseteq \Sigma$ we have  $\Gamma\:|\:\Sigma' \vdash t' : T$ and $\Gamma\:|\:\Sigma' \vdash \mu'$. Thus, the E-RefV case holds.
+
+\medskip
+\textbf{Case:} E-Assign\\
+If E-Assign was the last derivation we know $t = l := v_2$ and $t' = \texttt{unit}$ with $\mu' = [l \mapsto v_2]\mu$. The only typing derivation we can apply is T-Assign, thus we have $\Gamma\:|\:\Sigma \vdash l := v_2 : Unit$ and $T = Unit$ with the premises $\Gamma\:|\:\Sigma \vdash l : Ref\:T_1$ and $\Gamma\:|\:\Sigma \vdash v_2 : T_1$. It follows then by the 3rd clause of the extended inversion lemma we know $\Sigma(l) = T_1$.
+Then by Preservation Over Storage with our premises $\Gamma\:|\:\Sigma \vdash \mu$, $\Sigma(l) = T_1$ and $\Gamma\:|\:\Sigma \vdash v_2 : T_1$ we know $\Gamma\:|\:\Sigma \vdash \mu'$. Lastly, by T-Unit we know $\Gamma\:|\:\Sigma \vdash \texttt{unit} : Unit$. Setting $\Sigma' = \Sigma$ we've shown for $\Sigma' \supseteq \Sigma$ we have $\Gamma\:|\:\Sigma' \vdash t' : T$ and $\Gamma\:|\:\Sigma' \vdash \mu'$. Thus, the E-Assign case holds.
+
+\medskip
+\textbf{Case:} E-DerefLoc\\
+If E-DerefLoc was the last derivation we know $t = !l$, $t' = v$ and $\mu' = \mu$ with $l$ a memory locations and $v$ some value. We also have the premise that $\mu(l) = v$. The only typing derivation we can apply is T-Deref, thus we know $\Gamma\:|\:\Sigma \vdash\: !l : T_1$ with $T = T_1$, and have the premise $\Gamma\:|\:\Sigma \vdash l : Ref\:T_1$. It then follows that by the 3rd clause of the extended inversion lemma $\Sigma(l) = T_1$. 
+Since we know $\mu$ is well-typed with respect to $\Gamma$ and $\Sigma$, by the definition of $\Gamma\:|\:\Sigma \vdash \mu$ we have $\mu(l) : \Sigma(l)$. Thus with $\mu(l) = v$ we have $\Gamma\:|\:\Sigma \vdash v : T_1$. Setting $\Sigma' = \Sigma$, we've shown for $\Sigma'$, $\Gamma\:|\:\Sigma' \vdash t' : T$ and $\Gamma\:|\:\Sigma' \vdash \mu$. Thus, the E-DerefLoc case holds.
+
+\medskip
+Thus our base cases hold.
+
+\medskip
+\emph{Induction step}. We assume for all sub-derivations of $t\:|\:\mu \rightarrow t'\:|\:\mu'$ the property of preservation holds. We will prove that for all possible derivations $t \rightarrow t'$ our property holds. We remaining possible derivations are the following:
+
+\medskip
+\textbf{Case:} E-Seq\\
+If E-Seq was the last derivation we know $t = t_1 ; t_2$, $t' = t_1' ; t_2$ and have the premise $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. The only typing derivation we can apply to $t$ is T-Seq thus we know $t$ is typed $T_2$ for some context $\Gamma$ and typing store $\Sigma$, thus $T = T_2$, and we have the premises $\Gamma\:|\: \Sigma \vdash t_1 : Unit$ and $\Gamma\:|\:\Sigma \vdash t_2 : T_2$. 
+By our induction hypothesis on $t_1$ with our premises $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$, $\Gamma\:|\: \Sigma \vdash t_1 : Unit$ and $\Gamma\:|\:\Sigma \vdash \mu$ we know there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t_1' : Unit$ and $\Gamma\:|\:\Sigma' \vdash \mu'$. With $\Sigma' \supseteq \Sigma$ and $\Gamma\:|\:\Sigma \vdash t_2 : T_2$, by Weakening Over Typing Stores we know $\Gamma\:|\:\Sigma' \vdash t_2 : T_2$. Thus, by T-Seq with our premises $\Gamma\:|\:\Sigma' \vdash t_1' : Unit$ and $\Gamma\:|\:\Sigma' \vdash t_2 : T_2$ we know $\Gamma\:|\:\Sigma' \vdash t_1' ; t_2 : T_2$. Therefore we've shown there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t' : T$ with $\Gamma\:|\:\Sigma' \vdash \mu'$, so our E-Seq case holds.
+
+\medskip
+\textbf{Case:} E-Ref\\
+We prove the E-Ref case similarly to E-Seq. With E-Ref we know $t = \texttt{ref}\:t_1$, $t' = \texttt{ref}\:t_1'$ and have the premise $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. The only typing derivation we can apply to $t$ is T-Ref thus we know $\Gamma\:|\:\Sigma \vdash \texttt{ref}\:t_1 : Ref \: T_1$, $T = Ref \: T_1$ and have the premise $\Gamma\:|\:\Sigma \vdash t_1 : T_1$. 
+By our induction hypothesis on $t_1$ with our premises $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$, $\Gamma\:|\: \Sigma \vdash t_1 : T_1$ and $\Gamma\:|\:\Sigma \vdash \mu$ we know there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t_1' : T_1$ and $\Gamma\:|\:\Sigma' \vdash \mu'$. By T-Ref with the premise $\Gamma\:|\:\Sigma' \vdash t_1' : T_1$ we have $\Gamma\:|\:\Sigma' \vdash \texttt{ref}\:t_1' : Ref\:T_1$. Therefore we've shown there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t' : T$ with $\Gamma\:|\:\Sigma' \vdash \mu'$, so our E-Ref case holds.
+
+\medskip
+\textbf{Case:} E-Assign1\\
+We prove the E-Assign1 case similarly to E-Seq. With E-Assign1 we know $t = t_1 := t_2$, $t' = t_1' := t_2$ and have the premise $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. The only typing derivation we can apply to $t$ is T-Assign thus we know $\Gamma\:|\:\Sigma \vdash t_1 := t_2 : Unit$, $T = Unit$ and have the premises $\Gamma\:|\:\Sigma \vdash t_1 : Ref\:T_1$ and $\Gamma\:|\:\Sigma \vdash t_2 : T_1$. 
+By our induction hypothesis on $t_1$ with our premises $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$, $\Gamma\:|\: \Sigma \vdash t_1 : Ref\:T_1$ and $\Gamma\:|\:\Sigma \vdash \mu$ we know there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t_1' : Ref\:T_1$ and $\Gamma\:|\:\Sigma' \vdash \mu'$.
+With $\Sigma' \supseteq \Sigma$ and $\Gamma\:|\:\Sigma \vdash t_2 : T_1$, by Weakening Over Typing Stores we know $\Gamma\:|\:\Sigma' \vdash t_2 : T_1$. By T-Assign with the premises $\Gamma\:|\:\Sigma' \vdash t_1' : Ref\:T_1$ and $\Gamma\:|\:\Sigma' \vdash t_2 : T_1$ we have $\Gamma\:|\:\Sigma' \vdash t_1' := t_2 : Unit$. Therefore we've shown there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t' : T$ with $\Gamma\:|\:\Sigma' \vdash \mu'$, so our E-Assign1 case holds.
+
+\medskip
+\textbf{Case:} E-Assign2\\
+We prove the E-Assign2 case similarly to E-Seq. With E-Assign2 we know $t = v_1 := t_2$, $t' = v_2 := t_2'$ with $v_1$ some value. We also have the premise $t_2\:|\:\mu \rightarrow t_2'\:|\:\mu'$. The only typing derivation we can apply to $t$ is T-Assign thus we know $\Gamma\:|\:\Sigma \vdash v_1 := t_2 : Unit$, $T = Unit$ and have the premises $\Gamma\:|\:\Sigma \vdash v_1 : Ref\:T_1$ and $\Gamma\:|\:\Sigma \vdash t_2 : T_1$. 
+By our induction hypothesis on $t_2$ with our premises $t_2\:|\:\mu \rightarrow t_2'\:|\:\mu'$, $\Gamma\:|\: \Sigma \vdash t_2 : T_1$ and $\Gamma\:|\:\Sigma \vdash \mu$ we know there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t_2' : T_1$ and $\Gamma\:|\:\Sigma' \vdash \mu'$.
+With $\Sigma' \supseteq \Sigma$ and $\Gamma\:|\:\Sigma \vdash v_1 : Ref\:T_1$, by Weakening Over Typing Stores we know $\Gamma\:|\:\Sigma' \vdash v_1 : Ref\:T_1$. By T-Assign with the premises $\Gamma\:|\:\Sigma' \vdash v_1 : Ref\:T_1$ and $\Gamma\:|\:\Sigma' \vdash t_2' : T_1$ we have $\Gamma\:|\:\Sigma' \vdash v_1 := t_2' : Unit$. Therefore we've shown there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t' : T$ with $\Gamma\:|\:\Sigma' \vdash \mu'$, so our E-Assign2 case holds.
+
+\medskip
+\textbf{Case:} E-Deref\\
+We prove the E-Deref case similarly to E-Ref. With E-Deref we know $t = !t_1$, $t' = !t_1'$ and have the premise $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$. The only typing derivation we can apply to $t$ is T-Deref thus we know $\Gamma\:|\:\Sigma \vdash !t_1 : T_1$, $T = T_1$ and have the premise $\Gamma\:|\:\Sigma \vdash t_1 : Ref\:T_1$. 
+By our induction hypothesis on $t_1$ with our premises $t_1\:|\:\mu \rightarrow t_1'\:|\:\mu'$, $\Gamma\:|\: \Sigma \vdash t_1 : Ref\:T_1$ and $\Gamma\:|\:\Sigma \vdash \mu$ we know there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t_1' : Ref\:T_1$ and $\Gamma\:|\:\Sigma' \vdash \mu'$. 
+By T-Deref with the premise $\Gamma\:|\:\Sigma' \vdash t_1' : Ref\:T_1$ we have $\Gamma\:|\:\Sigma' \vdash !t_1' : T_1$. Therefore we've shown there exists $\Sigma' \supseteq \Sigma$ such that $\Gamma\:|\:\Sigma' \vdash t' : T$ with $\Gamma\:|\:\Sigma' \vdash \mu'$, so our E-Deref case holds.
+
+\medskip
+Therefore our induction step holds. We have shown for all possible typing derivations the preservation property holds.\\
+Thus we've shown that the property of preservation holds for our augmented simply typed $\lambda$-Calculus.
+
+\end {document}
