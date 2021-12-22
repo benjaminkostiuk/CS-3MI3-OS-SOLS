@@ -1,0 +1,241 @@
+\documentclass[12pt, fleqn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage[nounderscore]{syntax}
+\usepackage{mdwtab}
+\usepackage{mathpartir}
+\usepackage{listings}
+
+\lstset{
+  frame=none,
+  xleftmargin=2pt,
+  belowcaptionskip=\bigskipamount,
+  captionpos=b,
+  escapeinside={*'}{'*},
+  language=haskell,
+  tabsize=2,
+  emphstyle={\bf},
+  commentstyle=\it,
+  stringstyle=\mdseries\rmfamily,
+  showspaces=false,
+  keywordstyle=\bfseries\rmfamily,
+  columns=flexible,
+  basicstyle=\small\sffamily,
+  showstringspaces=false,
+  morecomment=[l]\%,
+}
+
+% \renewcommand{\texttt}[1]{\OldTexttt{\color{teal}{#1}}}
+\newcommand{\pnote}[1]{{\langle \text{#1} \rangle}}
+\newcommand{\mname}[1]{\mbox{\sf #1}}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.05}
+\definecolor{mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{mGray2}{rgb}{0.55,0.55,0.55}
+\definecolor{mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{backgroundColour2}{rgb}{0.95,0.92,0.95}
+
+\definecolor{t_comment}{rgb}{0.2,1,0.2}
+\definecolor{t_mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{t_mPurple}{rgb}{0.58,0,0.05}
+\definecolor{t_blue}{rgb}{0.4,0.6,0.8}
+\definecolor{t_mGreen2}{rgb}{0.05,0.65,0.05}
+\definecolor{t_mGray2}{rgb}{0.75,0.75,0.75}
+\definecolor{t_mPurple2}{rgb}{0.63,0.05,0.05}
+\definecolor{t_bg}{rgb}{0.15,0.15,0.18}
+
+\setlength{\parindent}{0pt}
+\setlength {\topmargin} {-.15in}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{3MI3 Final}
+\author{x}
+\date{\today}
+
+\begin{document}
+
+\begin{center}
+
+    {\large \textbf{COMPSCI 3MI3}}\\[8mm]
+    {\huge \textbf{Final Exam}}\\[6mm]
+
+\end{center}
+
+\medskip
+
+\section{Answers}
+
+\subsection{Q1}
+We follow the definition of the Van Eck sequence as given in the exam paper, with $E(i)$ denoting the $i$-th number of the Van Eck sequence. We will prove that for any sequence up to the $n$-th element, the sum of all elements in the sequence up to an including $n$ is bounded by $n^2$. Formally we prove:
+$$
+P(n) = \sum_{i=0}^{n}{E(i)} \leq n^2
+$$
+We will prove $P(n)$ holds for all $n \in \mathbb{N}$ by weak induction on $n$.
+
+\medskip
+\emph{Base case}: n = 0, 1, 2\\
+It is trivial to show $P(n)$ holds for cases n = 0, 1, 2 by simple calculation.
+
+$n = 0$: $0 \leq 0^2$ holds.\\
+$n = 1$: $0 + 0 \leq 1^2 \equiv 0 \leq 1$ holds.\\
+$n = 2$: $0 + 0 + 1 \leq 2^2 \equiv 1 \leq 4$ holds.
+
+\medskip
+Thus, $P(0), P(1)$ and $P(2)$ hold and our base cases hold.
+
+\medskip
+\emph{Induction step}: $n > 2$. Assume $P(n)$ holds. We will show $P(n+1)$ holds.\\
+By the formal definition of our property we must show:
+
+\begin{align*}
+    &\sum_{i=0}^{n+1}{E(i)} \leq (n+1)^2 & \pnote{Definition of P(n+1)} \\
+    \iff& \sum_{i=0}^{n+1}{E(i)} \leq n^2 + 2n + 1 &  \pnote{$(a + b)^2 = a^2 + 2ab + b^2$} \\
+    \iff& \sum_{i=0}^{n}{E(i)} + E(n+1) \leq n^2 + 2n + 1 &  \pnote{Split off top of $\Sigma$}
+\end{align*}
+By our induction hypothesis $P(n)$ we know the sum of all elements up to $n$ is bounded by $n^2$. Formally we know $\sum_{i=0}^{n}{E(i)} \leq n^2$.
+\begin{align*}
+    & \sum_{i=0}^{n}{E(i)} + E(n+1) \leq n^2 + 2n + 1 &  \\
+    \iff& E(n+1) \leq 2n + 1 &  \pnote{Ind. hyp. $P(n)$; Monotonicity of $\leq$}
+\end{align*}
+According to the definition of the Van Eck sequence, to compute $E(i+1)$ we count how many numbers it has been since $E(i)$ has occurred in the sequence relative to $i+1$. In a Van Eck sequence up to element $n+1$ we can count at most $n+1$ numbers before finding a previously occuring $E(i)$. Therefore we know $E(n+1) \leq n + 1 \implies E(n+1) \leq 2n + 1$. Thus our property holds for $P(n+1)$ and our inductive step holds.
+
+\medskip
+Therefore, $P(n)$ holds for all $n \in \mathbb{N}$ by weak induction. We have shown that for any element in a Van Eck sequence of length $n$, the sum of all elements in the sequence up to an including the element is bounded by $n^2$.\qed
+
+\subsection{Q2}
+
+\begin{enumerate}[(a)]
+    
+    \item If we add the evaluation rule E-Funny1 to our operational semantics:
+
+    \begin{itemize}
+        \item \textbf{Determinacy of One-Step Evalution} will be broken because we would introduce multiple evaluation rules that could apply to the same term at the same time. For example consider the term $t$ with some subterms $t_2$, $t_3$:
+        $$t = \textbf{if true then}\:\:t_2\:\:\textbf{else}\:\:t_3$$ 
+        We can either apply E-Funny1 to $t$ to obtain $t_3$ or we can apply E-IfTrue to obtain $t_2$. Therefore, we have $t \rightarrow t_3$ and $t \rightarrow t_2$ with $t_3 \neq t_2$, thus breaking the determinancy of our semantics.
+
+
+        \item \textbf{If $t$ is in Normal Form, $t$ is a Value} will not be broken.
+        
+        \item \textbf{Uniqueness of Normal Forms} will be broken because we could evaluate a term $t$ in multiple different ways, yiedling different normal forms. For example consider the term $t$ below:
+        $$t = \textbf{if true then true else false}$$
+        Applying the E-Funny to $t$ yields \textbf{false}, while applying E-IfTrue to $t$ yields \textbf{true}. Thus we have $t \rightarrow^* \textbf{false}$ and $t \rightarrow^* \textbf{true}$ with both \textbf{false} and \textbf{true} being normal forms in our language, however \textbf{true} $\neq$ \textbf{false}. Therefore we have violated the theorem of uniqueness of normal forms.
+
+    \end{itemize}
+    \item If we add the evaluation rule E-Funny2 to our operational semantics:
+
+    \begin{itemize}
+        \item \textbf{Determinacy of One-Step Evalution} will be broken because we would introduce multiple evaluation rules that could apply to the same terms at the same time. For example consider the term $t$ with some subterms $t_1$, $t_2$ and $t_3$, with $t_1 \rightarrow t_1'$ and $t_2 \rightarrow t_2'$.
+        $$t = \textbf{if}\:\:t_1\:\:\textbf{then}\:\:t_2\:\:\textbf{else}\:\:t_3$$ 
+        We can either apply E-Funny2 to $t$ with the premise $t_2 \rightarrow t_2'$ to obtain\\$t' = \textbf{if}\:\:t_1\:\:\textbf{then}\:\:t_2'\:\:\textbf{else}\:\:t_3$, or we can apply E-If to $t$ to obtain\\ $t'' = \textbf{if}\:\:t_1'\:\:\textbf{then}\:\:t_2\:\:\textbf{else}\:\:t_3$. Therefore, we have $t \rightarrow t'$ and $t \rightarrow t''$ but $t' \neq t''$, thus breaking the determinancy of our semantics.
+
+        \item \textbf{If $t$ is in Normal Form, $t$ is a Value} will not be broken.
+        \item \textbf{Uniqueness of Normal Forms} will not be broken.
+    \end{itemize}
+
+\end{enumerate}
+
+\subsection{Q3}
+
+\begin{enumerate}[(a)]
+    \item The property of determinacy does not hold for the given language and its semantics, since there are terms for which we can apply multiple evaluation rules at a time.
+    
+    First, looking at E-Groint1 and E-Groint2 for a term $t = \textbf{Groint}\:t_1\:t_2$ with $t_1 \rightarrow t_1'$ and $t_2 \rightarrow t_2'$ we can apply either E-Groint1 to obtain $t' = \textbf{Groint}\:t_1'\:t_2$ or apply E-Groint2 to obtain $t'' = \textbf{Groint}\:t_1\:t_2'$. Since $t' \neq t''$ the semantics of the language are not determinate.
+
+    Secondly, if we examine E-Groint1 and E-GrointLrykl for a term \\$t = \textbf{Groint}\:(\textbf{Lrykl Zmifm})\:\textbf{Zmifm}$ we can apply either E-Groint1 to obtain $t' = \textbf{Groint}\:\:\textbf{Ploort Zmifm}$ or apply E-GrointLrykl to obtain $t'' = \textbf{Zmifm}$. Since $t' \neq t''$ the semantics of the language are not determinate.
+
+    One possible approach to fix the language and ensure determinancy is to replace E-Groint2 with a rule that has a value as a first term, and replace E-GrointLrykl with equivalent rules that works on two values, based on the semantics for \textbf{Lrykl}. These rules could work as follows:
+    \begin{equation}
+        \inferrule{ t_2 \rightarrow t_2' }{ \textbf{Groint}\:v_1\:t_2 \rightarrow \textbf{Groint}\:v_1\:t_2'} \tag{E-Groint2}
+    \end{equation}
+    \begin{equation}
+        { \textbf{Groint Xlenb Ploort} \rightarrow \textbf{Ploort}} \tag{E-GrointXP}
+    \end{equation}
+    \begin{equation}
+        { \textbf{Groint Zmifm Xlenb} \rightarrow \textbf{Xlenb}} \tag{E-GrointZX}
+    \end{equation}
+    \begin{equation}
+        { \textbf{Groint Ploort Zmifm} \rightarrow \textbf{Zmifm}} \tag{E-GrointPZ}
+    \end{equation}
+
+    \item The property of progress does not hold for the given language and its semantics, since there exist well-typed terms in the language that are neither values nor does there exist an evaluation rule that can be applied to them.
+    
+    We can consider any term $t = \textbf{Groint}\:v_1\:v_2$ where $v_1$ and $v_2$ are values. We know we have $v_1 : \textsl{Trill}$ and $v_2 : \textsl{Trill}$ by T-Trill, which contains all values. Then by T-Groint, we can type $\textbf{Groint}\:v_1\:v_2 : \textsl{Trill}$. While, $t$ is well-typed, it is not a value nor can we apply an evaluation rule from the list given to $t$. Thus we have a well-typed term that is stuck not as a value, therefore the progress property does not hold.
+
+    One possible approach to fix the language and ensure the property of progress holds is to add evaluation rules of the form $\textbf{Groint}\:v_1\:v_2$ for \emph{all} combinations of values $v_1$ and $v_2$. We could either complete the possible rules, adding onto the rules we defined in (a), or we could add the simple rule:
+    \begin{equation}
+        \textbf{Groint}\:v_1\:v_2 \rightarrow v_1 \tag{E-GrointV}
+    \end{equation}
+    Obviously, since humans do not understand the semantics of an alien language this additional rule may have an incorect meaning, but should ensure progress holds.
+
+    \item We will prove that the property of preservation holds for the given language and its semantics. Formally we prove for any term $t$:
+    $$t : T \land t \rightarrow t' \implies t' : T$$
+    We will prove the above holds by induction on the typing derivation $t : T$. We proceed by cases.
+    
+    \emph{Base case}. Our base case denotes all typing derivations for which there do not exist any further sub-typing derivations. The possible typing derivations are of the following cases:
+    
+    \textbf{Case}: T-Trill\\
+    For all cases where $t:T$ by T-Trill $t$ is a value, therefore we cannot have $t \rightarrow t'$. Thus, the left side of our implication is false and our property is vacuously true.\\
+    Thus, our base case holds.
+
+    \emph{Induction step}. We assume for all typing sub-derivations that the property of preservation holds. We prove for the remaining typing derivations the property of preservation holds. The typing derivation must be one of the following:
+
+    \textbf{Case}: T-Lrykl\\
+    If T-Lrykl was the last typing derivation then $t : \textsl{Trill}$ and $t$ has the form $\textbf{Lrykl}\:t_1$ with the premise $t_1 : \textsl{Trill}$.\\
+    If we can apply E-LryklPloort to $t$ then $t = \textbf{Lrykl Ploort}$ and $t' = \textbf{Xlenb}$. By T-Trill we know $t' : \textsl{Trill}$ and our property holds. We use the same logic to prove cases for E-LryklXlenb and E-LryklZmifm.\\
+    If we can apply E-Lrykl to $t$ then $t = \textbf{Lrykl}\:\:t_1$, $t' = \textbf{Lrykl}\:\:t_1'$ and we have the premise $t_1 \rightarrow t_1'$. By our induction hypothesis on $t_1$ with the premises $t_1 : \textsl{Trill}$ and $t_1 \rightarrow t_1'$ we know $t_1' : \textsl{Trill}$. Thus, by T-Lrykl, since we know $t_1' : \textsl{Trill}$ we know $\textbf{Lrykl}\:\:t_1' : \textsl{Trill}$. Therefore, our property of preservation holds.
+
+    \textbf{Case}: T-Groint\\
+    If T-Groint was the last typing derivation then $t : \textsl{Trill}$ and $t$ has the form $\textbf{Groint}\:t_1\:t_2$ with the premises $t_1 : \textsl{Trill}$ and $t_2 : \textsl{Trill}$.\\
+    If we can apply E-GrointLrykl to $t$ then $t = \textbf{Groint}\:(\textbf{Lrykl}\:\:v_2)\:v_2$ and $t' = v_2$. Since $t'$ is a value and by T-Trill we know all values are well-typed as \textsl{Trill}, we know $t' : \textsl{Trill}$. Thus, our property holds.\\
+    If we can apply E-Groint1 to $t$ then $t = \textbf{Groint}\:t_1\:t_2$, $t' = \textbf{Groint}\:t_1'\:t_2$ and we have the premise $t_1 \rightarrow t_1'$. By our induction hypothesis on $t_1$ with the premises $t_1 : \textsl{Trill}$ and $t_1 \rightarrow t_1'$ we know $t_1': \textsl{Trill}$. Thus, by T-Groint with the premises $t_1': \textsl{Trill}$ and $t_2 : \textsl{Trill}$ we know $t' : \textsl{Trill}$. Therefore, our property of preservation holds. We can make a symmetrical argument for proving E-Groint2.
+
+    Therefore, our induction step holds. We have shown for all possible typing derivations the property of preservation holds.\\
+    Thus, we've shown that preservation holds for the given language and its semantics. 
+
+\end{enumerate}
+
+\subsection{Q4}
+
+We define the grammar, operational semantics and typing rules for a deallocation operation \textbf{free}, assuming all previously defined semantics from topic 10.
+
+\begin{grammar}
+    <t> ::= \dots \alt \textbf{free}\:<t>
+
+    <v> ::= \dots
+
+    <T> ::= \dots
+\end{grammar}
+
+\begin{equation}
+    \inferrule{t_1\:|\:\mu \rightarrow t_1'\:|\:\mu' }{ \textbf{free}\:t_1\:|\:\mu \rightarrow \textbf{free}\:t_1'\:|\:\mu' } \tag{E-Dealloc}
+\end{equation}
+\begin{equation}
+    \inferrule{ l \in \textsl{dom}(\mu) }{ \textbf{free}\:l\:|\:\mu \rightarrow \textsl{unit}\:|\:(\mu\: \backslash\:[l \mapsto v_1]) } \tag{E-DeallocL}
+\end{equation}
+Where $\mu\: \backslash\:[l \mapsto v_1]$ denotes the removal of the mapping of location $l$ to value $v_1$ in the memory store, freeing up location $l$ and removing $v_1$ from memory. Thus if $\mu' = \mu\: \backslash\:[l \mapsto v_1]$, then $\textsl{dom}(\mu') = \textsl{dom}(\mu)\:\backslash\:l$.
+\begin{equation}
+    \inferrule{ \Gamma \vdash t_1 : \textsl{Ref}\:\:T_1 }{ \Gamma \vdash \textbf{free}\:t_1 : \textsl{Unit} } \tag{T-Dealloc}
+\end{equation}
+
+\subsection{Q5}
+\lstinputlisting[language=Haskell]{Q5.hs}
+\end {document}
