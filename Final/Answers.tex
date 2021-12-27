@@ -160,7 +160,7 @@ Therefore, $P(n)$ holds for all $n \in \mathbb{N}$ by weak induction. We have sh
     
     First, looking at E-Groint1 and E-Groint2 for a term $t = \textbf{Groint}\:t_1\:t_2$ with $t_1 \rightarrow t_1'$ and $t_2 \rightarrow t_2'$ we can apply either E-Groint1 to obtain $t' = \textbf{Groint}\:t_1'\:t_2$ or apply E-Groint2 to obtain $t'' = \textbf{Groint}\:t_1\:t_2'$. Since $t' \neq t''$ the semantics of the language are not determinate.
 
-    Secondly, if we examine E-Groint1 and E-GrointLrykl for a term \\$t = \textbf{Groint}\:(\textbf{Lrykl Zmifm})\:\textbf{Zmifm}$ we can apply either E-Groint1 to obtain $t' = \textbf{Groint}\:\:\textbf{Ploort Zmifm}$ or apply E-GrointLrykl to obtain $t'' = \textbf{Zmifm}$. Since $t' \neq t''$ the semantics of the language are not determinate.
+    Secondly, if we examine E-Groint1 and E-GrointLrykl for a term \\$t = \textbf{Groint}\:(\textbf{Lrykl Zmifm})\:\textbf{Zmifm}$ we can apply either E-Groint1 to obtain $t' = \textbf{Groint}\:\:\textbf{Ploort Zmifm}$ or apply E-GrointLrykl to obtain $t'' = \textbf{Zmifm}$. Since $t' \neq t''$ the semantics of the language are not determinate. For all other possible cases the determinacy of the language will hold.
 
     One possible approach to fix the language and ensure determinancy is to replace E-Groint2 with a rule that has a value as a first term, and replace E-GrointLrykl with equivalent rules that works on two values, based on the semantics for \textbf{Lrykl}. These rules could work as follows:
     \begin{equation}
@@ -178,7 +178,7 @@ Therefore, $P(n)$ holds for all $n \in \mathbb{N}$ by weak induction. We have sh
 
     \item The property of progress does not hold for the given language and its semantics, since there exist well-typed terms in the language that are neither values nor does there exist an evaluation rule that can be applied to them.
     
-    We can consider any term $t = \textbf{Groint}\:v_1\:v_2$ where $v_1$ and $v_2$ are values. We know we have $v_1 : \textsl{Trill}$ and $v_2 : \textsl{Trill}$ by T-Trill, which contains all values. Then by T-Groint, we can type $\textbf{Groint}\:v_1\:v_2 : \textsl{Trill}$. While, $t$ is well-typed, it is not a value nor can we apply an evaluation rule from the list given to $t$. Thus we have a well-typed term that is stuck not as a value, therefore the progress property does not hold.
+    We can consider any term $t = \textbf{Groint}\:v_1\:v_2$ where $v_1$ and $v_2$ are values. We know we have $v_1 : \textsl{Trill}$ and $v_2 : \textsl{Trill}$ by T-Trill, which contains all values. Then by T-Groint, we can type $\textbf{Groint}\:v_1\:v_2 : \textsl{Trill}$. While, $t$ is well-typed, it is not a value nor can we apply an evaluation rule from the list given to $t$. Thus we have a well-typed term that is stuck not as a value, therefore the progress property does not hold. For all other possible cases of the language the property of progress will hold.
 
     One possible approach to fix the language and ensure the property of progress holds is to add evaluation rules of the form $\textbf{Groint}\:v_1\:v_2$ for \emph{all} combinations of values $v_1$ and $v_2$. We could either complete the possible rules, adding onto the rules we defined in (a), or we could add the simple rule:
     \begin{equation}
@@ -229,9 +229,9 @@ We define the grammar, operational semantics and typing rules for a deallocation
     \inferrule{t_1\:|\:\mu \rightarrow t_1'\:|\:\mu' }{ \textbf{free}\:t_1\:|\:\mu \rightarrow \textbf{free}\:t_1'\:|\:\mu' } \tag{E-Dealloc}
 \end{equation}
 \begin{equation}
-    \inferrule{ l \in \textsl{dom}(\mu) }{ \textbf{free}\:l\:|\:\mu \rightarrow \textsl{unit}\:|\:(\mu\: \backslash\:[l \mapsto v_1]) } \tag{E-DeallocL}
+    \inferrule{ l \in \textsl{dom}(\mu) \and \mu(l) = v_1 }{ \textbf{free}\:l\:|\:\mu \rightarrow \textsl{unit}\:|\:(\mu\: \backslash\:(l \mapsto v_1)) } \tag{E-DeallocL}
 \end{equation}
-Where $\mu\: \backslash\:[l \mapsto v_1]$ denotes the removal of the mapping of location $l$ to value $v_1$ in the memory store, freeing up location $l$ and removing $v_1$ from memory. Thus if $\mu' = \mu\: \backslash\:[l \mapsto v_1]$, then $\textsl{dom}(\mu') = \textsl{dom}(\mu)\:\backslash\:l$.
+Where $\mu\: \backslash\:(l \mapsto v_1)$ denotes the removal of the mapping of location $l$ to value $v_1$ in the memory store, freeing up location $l$ and removing $v_1$ from memory. Thus if $\mu' = \mu\: \backslash\:(l \mapsto v_1)$, then $\textsl{dom}(\mu') = \textsl{dom}(\mu)\:\backslash\:l$.
 \begin{equation}
     \inferrule{ \Gamma \vdash t_1 : \textsl{Ref}\:\:T_1 }{ \Gamma \vdash \textbf{free}\:t_1 : \textsl{Unit} } \tag{T-Dealloc}
 \end{equation}
